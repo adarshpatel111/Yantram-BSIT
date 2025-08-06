@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
   useremail: z.string().email({
@@ -38,6 +39,7 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -48,7 +50,20 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+    setIsLoading(true);
+    try {
+      const res = await authClient.signIn.email({
+        email: data.useremail,
+        password: data.password,
+        callbackURL: "/",
+      });
+      setIsLoading(false);
+      form.reset();
+      console.log("onSubmit signin", res);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -120,11 +135,17 @@ export default function LoginForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Submit
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                </>
+              ) : (
+                "Submit"
+              )}
             </Button>
             <div className="w-full flex justify-center items-center text-sm">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/signup" className="underline ml-1">
                 Sign up
               </Link>
