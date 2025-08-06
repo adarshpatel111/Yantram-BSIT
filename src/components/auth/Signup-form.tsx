@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -26,6 +25,7 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
   username: z.string().min(3, {
@@ -42,8 +42,9 @@ const formSchema = z.object({
   }),
 });
 
-export default function LoginForm() {
+export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -57,6 +58,21 @@ export default function LoginForm() {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
+    setIsLoading(true);
+    try {
+      const res = await authClient.signUp.email({
+        name: data.username,
+        email: data.useremail,
+        password: data.password,
+        phone: data.userpnumber,
+      });
+      console.log("result", res);
+      form.reset();
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -153,8 +169,14 @@ export default function LoginForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Submit
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                </>
+              ) : (
+                "Submit"
+              )}
             </Button>
             <div className="w-full flex justify-center items-center text-sm">
               Already have an account?{" "}
