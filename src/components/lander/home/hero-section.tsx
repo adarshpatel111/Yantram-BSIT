@@ -63,7 +63,7 @@ const HeroSection: React.FC = () => {
           solar solutions, energy-efficient appliances, and smart home
           technologies that redefine modern living.
         </p>
-        <Link href={"/register"}>
+        <Link href={"/signup"}>
           <div className="flex justify-center items-center relative cursor-pointer">
             <Button className="rounded-full z-10  cursor-pointer hover:bg-primary">
               Create Account For Free
