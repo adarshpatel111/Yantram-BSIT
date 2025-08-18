@@ -26,6 +26,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
   username: z.string().min(3, {
@@ -57,7 +58,6 @@ export default function SignupForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data);
     setIsLoading(true);
     try {
       const res = await authClient.signUp.email({
@@ -69,6 +69,7 @@ export default function SignupForm() {
       console.log("result", res);
       form.reset();
       setIsLoading(false);
+      redirect("/dashboard");
     } catch (error) {
       console.log(error);
       setIsLoading(false);
