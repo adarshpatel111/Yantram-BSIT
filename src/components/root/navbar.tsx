@@ -14,6 +14,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import Image from "next/image";
+import { authClient } from "@/lib/auth-client";
 const Navbar: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const links = [
@@ -34,6 +35,7 @@ const Navbar: React.FC = () => {
       href: "/contact",
     },
   ];
+  const { data } = authClient.useSession();
 
   return (
     <nav className="fixed top-8 w-full flex justify-center items-center px-5 md:px-10 lg:px-20 z-30">
