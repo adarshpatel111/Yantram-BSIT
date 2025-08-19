@@ -65,11 +65,11 @@ export default function SignupForm() {
         email: data.useremail,
         password: data.password,
         phone: data.userpnumber,
-        callbackURL: "/dashboard",
       });
       console.log("result", res);
       form.reset();
       setIsLoading(false);
+      redirect("/dashboard");
     } catch (error) {
       console.log(error);
       setIsLoading(false);
