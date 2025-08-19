@@ -2,7 +2,6 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { db } from "@/db/db";
 import { nextCookies } from "better-auth/next-js";
-import { inferAdditionalFields } from "better-auth/client/plugins";
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),

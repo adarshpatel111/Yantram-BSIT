@@ -55,7 +55,7 @@ export default function LoginForm() {
       const res = await authClient.signIn.email({
         email: data.useremail,
         password: data.password,
-        callbackURL: "/",
+        callbackURL: "/dashboard",
       });
       setIsLoading(false);
       form.reset();
