@@ -33,6 +33,18 @@ const data = {
           title: "Products",
           url: "/dashboard/products",
         },
+        {
+          title: "Users",
+          url: "/dashboard/users",
+        },
+        {
+          title: "Purchases",
+          url: "/dashboard/purchases",
+        },
+        {
+          title: "Accounts",
+          url: "/dashboard/accounts",
+        },
       ],
     },
   ],
