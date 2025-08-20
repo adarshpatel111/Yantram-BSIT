@@ -14,11 +14,9 @@ import {
 import { IconBrandThreads } from "@tabler/icons-react";
 
 const links = [
-  { title: "Features", href: "#" },
-  { title: "Solution", href: "#" },
-  { title: "Pricing", href: "#" },
-  { title: "Contact", href: "#" },
-  { title: "About", href: "#" },
+  { title: "Products", href: "/products" },
+  { title: "About", href: "/about" },
+  { title: "Contact", href: "/contact" },
 ];
 
 const socialLinks = [

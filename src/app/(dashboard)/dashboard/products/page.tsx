@@ -1,10 +1,10 @@
-import Purchases from "@/components/dashboard/purchases/purchases";
+import Products from "@/components/dashboard/product/Products";
 import React from "react";
 
 const page = () => {
   return (
     <>
-      <Purchases />
+      <Products />
     </>
   );
 };

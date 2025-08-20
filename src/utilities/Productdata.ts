@@ -16,8 +16,6 @@ export const featuredProducts = [
     name: "High Efficiency Solar Panel",
     model: "SP72-450",
     image: SOLARPANEL,
-    price: "₹9,499",
-    originalPrice: "₹11,999",
     features: [
       "High Conversion Efficiency",
       "Durable Tempered Glass",
@@ -25,6 +23,7 @@ export const featuredProducts = [
       "Perfect for Rooftop & Ground Mount",
       "Monocrystalline Technology",
     ],
+    status: 1,
     specs: {
       type: "Monocrystalline",
       powerOutput: "450W",
@@ -33,6 +32,23 @@ export const featuredProducts = [
     },
     badge: "Green Energy",
     variations: true,
+    variants: [
+      { placetype: "Residential", type: "Mono PERC", price: 28499 },
+      {
+        placetype: "Common Residential",
+        type: "Mono PERC",
+        price: 89999,
+      },
+      { placetype: "Commercial", type: "Mono PERC", price: 46999 },
+      {
+        placetype: "Captive/Ground Mounted",
+        type: "Mono PERC",
+        price: 89999,
+      },
+      { placetype: "Sell to DISCOM", type: "Mono PERC", price: 28499 },
+      { placetype: "Third party sell", type: "Mono PERC", price: 46999 },
+      { placetype: "Industrial", type: "Mono PERC", price: 89999 },
+    ],
   },
 
   // 2. Water Heater
@@ -41,8 +57,6 @@ export const featuredProducts = [
     name: "Solar Water Heater",
     model: "SunHeat Pro",
     image: HeatPump,
-    price: "₹14,999",
-    originalPrice: "₹19,999",
     features: [
       "Eco-Friendly Solar Heating",
       "Low Maintenance, Long Life",
@@ -50,6 +64,7 @@ export const featuredProducts = [
       "Weather Resistant Tank",
       "Quick Heating Efficiency",
     ],
+    status: 1,
     specs: {
       type: "Solar Thermal",
       capacity: "100–300 Liters",
@@ -58,6 +73,11 @@ export const featuredProducts = [
     },
     badge: "Hot Savings",
     variations: true,
+    variants: [
+      { placetype: "Residential", capacity: "200L", price: 18999 },
+      { placetype: "Residential", capacity: "300L", price: 22499 },
+      { placetype: "Commercial", capacity: "500L", price: 14999 },
+    ],
   },
 
   // 3. Parabolic Solar Cooker
@@ -66,8 +86,6 @@ export const featuredProducts = [
     name: "Parabolic Solar Cooker",
     model: "SolarChef 360",
     image: SolarCooker,
-    price: "₹6,499",
-    originalPrice: "₹8,499",
     features: [
       "Eco-Friendly Cooking without Gas",
       "High Temperature Reflective Design",
@@ -75,6 +93,7 @@ export const featuredProducts = [
       "Portable & Durable Frame",
       "Ideal for Outdoor Use",
     ],
+    status: 0,
     specs: {
       type: "Parabolic",
       heat: "Up to 350°C",
@@ -83,16 +102,18 @@ export const featuredProducts = [
     },
     badge: "Sun Cook",
     variations: true,
+    variants: [
+      { size: "Medium", price: 6499 },
+      { size: "Large", price: 7999 },
+    ],
   },
 
   // 4. Water Pump
   {
     id: "solar-water-pump",
-    name: "Solar BLDC Water Pump",
+    name: "Solar Water Pump",
     model: "BLDC-Pump",
     image: solarWaterPump,
-    price: "₹39,999",
-    originalPrice: "₹49,999",
     features: [
       "Available from 0.25 HP to 10 HP",
       "Runs on Solar & AC Current",
@@ -100,6 +121,7 @@ export const featuredProducts = [
       "30000+ Hours Lifespan",
       "Submersible & Open Well Options",
     ],
+    status: 1,
     specs: {
       type: "BLDC, Submersible/Open Well",
       input: "Solar + AC",
@@ -108,16 +130,18 @@ export const featuredProducts = [
     },
     badge: "Eco Power",
     variations: true,
+    variants: [
+      { type: "BLDC", hp: "0.25 HP", price: 39999 },
+      { type: "Solar", hp: "1 HP", price: 49999 },
+    ],
   },
 
-  // 5. 4k TV
+  // 5. 4K Smart TV
   {
     id: "4k-smart-tv",
     name: "4K Ultra HD Smart TV",
     model: "BS50WOS",
     image: SmartTV,
-    price: "₹45,999",
-    originalPrice: "₹55,999",
     features: [
       "126CM (50 INCH) 4K A+ Grade DLED Display",
       "webOS with Magic Remote & ThinQ AI",
@@ -125,6 +149,7 @@ export const featuredProducts = [
       "Netflix, Prime Video, Disney+ Hotstar",
       "HDR10 & HLG, MEMC 4K @60Hz",
     ],
+    status: 1,
     specs: {
       resolution: "4K (3840×2160)",
       display: "DLED, A+ Grade Panel",
@@ -134,6 +159,10 @@ export const featuredProducts = [
     },
     badge: "Best Seller",
     variations: true,
+    variants: [
+      { size: "50-inch", price: 28000 },
+      { size: "55-inch", price: 32000 },
+    ],
   },
 
   // 6. Air Conditioner
@@ -142,8 +171,6 @@ export const featuredProducts = [
     name: "Inverter Air Conditioner",
     model: "AC-Bharat",
     image: InverterAC,
-    price: "₹32,999",
-    originalPrice: "₹42,999",
     features: [
       "1 Ton / 1.5 Ton / 2 Ton Options",
       "Dual Tone: Grey / White",
@@ -151,6 +178,7 @@ export const featuredProducts = [
       "Wi-Fi, Bluetooth, Remote Integration",
       "Self-Cleaning & Air Filters",
     ],
+    status: 0,
     specs: {
       type: "Split AC",
       control: "Smart AI + Remote",
@@ -159,6 +187,11 @@ export const featuredProducts = [
     },
     badge: "Smart Cooling",
     variations: true,
+    variants: [
+      { tonnage: "1 Ton", price: 32999 },
+      { tonnage: "1.5 Ton", price: 38499 },
+      { tonnage: "2 Ton", price: 42999 },
+    ],
   },
 
   // 7. Water Purifier
@@ -167,8 +200,6 @@ export const featuredProducts = [
     name: "Alkaline Water Purifier",
     model: "Ultima Ganga",
     image: waterPurifier,
-    price: "₹18,999",
-    originalPrice: "₹24,999",
     features: [
       "Alkaline Water for TDS > 350",
       "Improves B12 Absorption & Digestion",
@@ -176,6 +207,7 @@ export const featuredProducts = [
       "Natural Pure Water Output",
       "RO + UV + Alkaline Filtration",
     ],
+    status: 2,
     specs: {
       filtration: "RO + UV + Alkaline",
       tds: "Above 350",
@@ -184,16 +216,19 @@ export const featuredProducts = [
     },
     badge: "Health+",
     variations: true,
+    variants: [
+      { capacity: "8 Liters", price: 17499 },
+      { capacity: "10 Liters", price: 18999 },
+      { capacity: "12 Liters", price: 20999 },
+    ],
   },
 
-  // 8. EV bike
+  // 8. EV Bike
   {
     id: "ev-bike",
     name: "EV Bike",
-    model: "Bold EV",
+    model: "Nemo",
     image: EVBike,
-    price: "₹79,999",
-    originalPrice: "₹89,999",
     features: [
       "Electric Vehicle for Bold Riders",
       "Eco-Friendly, Low Maintenance",
@@ -201,6 +236,7 @@ export const featuredProducts = [
       "No Fuel Required",
       "Tagline: 'Bild for Bold'",
     ],
+    status: 1,
     specs: {
       type: "Electric Bike",
       fuel: "Battery",
@@ -209,16 +245,18 @@ export const featuredProducts = [
     },
     badge: "Future Ride",
     variations: true,
+    variants: [
+      { color: "grey", battery: "3.0 kWh", price: 99000 },
+      { color: "white", battery: "3.0 kWh", price: 99000 },
+    ],
   },
 
   // 9. BLDC Fan
   {
     id: "bldc-fan",
-    name: "BLDC Ceiling Fan",
+    name: "Ceiling Fan",
     model: "BL-24 Smart",
     image: fanImg,
-    price: "₹4,999",
-    originalPrice: "₹6,999",
     features: [
       "30 Watt Energy Consumption",
       "Auto Cleaning Blades",
@@ -226,6 +264,7 @@ export const featuredProducts = [
       "Hybrid 12V DC / 220V AC",
       "Smart 385 RPM Performance",
     ],
+    status: 1,
     specs: {
       power: "30 Watts",
       speed: "385 RPM",
@@ -234,6 +273,12 @@ export const featuredProducts = [
     },
     badge: "Energy Saver",
     variations: true,
+    variants: [
+      { type: "BLDC", color: "White", size: "1200 mm", price: 5999 },
+      { type: "BLDC", color: "Brown", size: "1200 mm", price: 4999 },
+      { type: "Regular", color: "White", size: "1200 mm", price: 6999 },
+      { type: "Regular", color: "Brown", size: "1200 mm", price: 5999 },
+    ],
   },
 
   // 10. Air Cooler
@@ -242,8 +287,6 @@ export const featuredProducts = [
     name: "Air Cooler",
     model: "CoolBreeze 60",
     image: Album,
-    price: "₹7,999",
-    originalPrice: "₹10,999",
     features: [
       "High Air Delivery with Honeycomb Pads",
       "Energy Efficient Motor",
@@ -251,6 +294,7 @@ export const featuredProducts = [
       "Remote Controlled Operation",
       "Suitable for Dry & Humid Conditions",
     ],
+    status: 0,
     specs: {
       capacity: "60 Liters",
       control: "Remote + Manual",
@@ -259,6 +303,11 @@ export const featuredProducts = [
     },
     badge: "Cool Comfort",
     variations: true,
+    variants: [
+      { capacity: "50L", price: 7499 },
+      { capacity: "60L", price: 7999 },
+      { capacity: "75L", price: 8999 },
+    ],
   },
 
   // 11. Ionizer
@@ -267,8 +316,6 @@ export const featuredProducts = [
     name: "Ozone Ionizer",
     model: "OZO3 Green",
     image: OZO3Img,
-    price: "₹5,499",
-    originalPrice: "₹6,999",
     features: [
       "Removes 80–95% Pesticides",
       "Kills Viruses, Germs, Pathogens",
@@ -276,6 +323,7 @@ export const featuredProducts = [
       "Sterilizes Kitchen Utensils & Bottles",
       "User-Friendly Timer System",
     ],
+    status: 1,
     specs: {
       tech: "Ozone Green (OZO3)",
       usage: "Food, Air, Utensils",
@@ -283,5 +331,6 @@ export const featuredProducts = [
     },
     badge: "FreshTech",
     variations: true,
+    variants: [{ size: "Standard", price: 6500 }],
   },
 ];

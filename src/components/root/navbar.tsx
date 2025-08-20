@@ -105,7 +105,7 @@ const Navbar: React.FC = () => {
                 Login
               </Button>
             </Link>
-            <Link href={"/register"}>
+            <Link href={"/signup"}>
               <Button
                 size={"sm"}
                 variant={"outline"}

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -22,58 +23,69 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import { featuredProducts } from "@/utilities/Productdata";
 
 export default function Products() {
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [showVariationForm, setShowVariationForm] = useState(false);
+  const [variantPrice, setVariantPrice] = useState<number | null>(null);
+  const [selectedVariantLabel, setSelectedVariantLabel] = useState<
+    string | null
+  >(null);
 
-  // Variation form fields
-  const [selectedCapacity, setSelectedCapacity] = useState("");
-  const [installationType, setInstallationType] = useState("");
+  const formatPrice = (price: number) => `₹${price.toLocaleString("en-IN")}`;
 
   const handlePurchase = (product: any) => {
-    // If it's a solar product and has variations
-    if (product.name.toLowerCase().includes("solar") && product.variations) {
+    // Always go to solar form for solar panel
+    if (product.id === "solar-panel") {
+      router.push(`/products/${product.id}`);
+      return;
+    }
+    // Show modal if variants exist
+    if (product.variants && product.variants.length > 0) {
       setSelectedProduct(product);
       setShowVariationForm(true);
+      setVariantPrice(null);
       return;
     }
 
-    // Otherwise proceed directly
+    // No variants, go straight to login
     proceedToLogin(product);
   };
 
-  const proceedToLogin = (product: any, variations: any = null) => {
+  const proceedToLogin = (product: any, variation: any = null) => {
     const productData = {
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: variation?.price || product.basePrice,
       model: product.model,
       specs: product.specs,
       features: product.features,
-      variations,
+      variation,
     };
-
     console.log("Purchase data:", JSON.stringify(productData, null, 2));
     router.push("/login");
   };
 
-  const handleVariationSubmit = () => {
-    if (!selectedCapacity || !installationType) return;
+  const handleVariationSubmit = (selectedLabel: string) => {
+    if (!selectedProduct?.variants) return;
 
-    const variations = {
-      capacity: selectedCapacity,
-      installationType,
-    };
+    const found = selectedProduct.variants.find((variant: any) => {
+      const label = Object.entries(variant)
+        .filter(([key]) => key !== "price")
+        .map(([_, val]) => `${val}`)
+        .join(" - ");
+      return label === selectedLabel;
+    });
 
-    proceedToLogin(selectedProduct, variations);
+    if (found) {
+      proceedToLogin(selectedProduct, found);
+    }
   };
 
   return (
@@ -90,133 +102,211 @@ export default function Products() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {featuredProducts.map((product) => (
-            <Card
-              key={product.id}
-              className="group border hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden"
-            >
-              <div className="relative">
-                <Image
-                  src={product.image || "/file.svg"}
-                  alt={product.name}
-                  width={400}
-                  height={300}
-                  className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                {product.badge && (
-                  <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">
-                    {product.badge}
-                  </Badge>
-                )}
-              </div>
-
-              <CardHeader className="p-4 border-b">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg">{product.name}</CardTitle>
-                    <CardDescription className="text-sm">
-                      Model: {product.model}
-                    </CardDescription>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-primary">
-                      {product.price}
-                    </div>
-                    <div className="text-sm line-through text-muted-foreground">
-                      {product.originalPrice}
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="p-4">
-                <div className="mb-4">
-                  <h4 className="font-medium mb-2 text-sm text-gray-700">
-                    Key Features:
-                  </h4>
-                  <ul className="space-y-1">
-                    {product.features
-                      .slice(0, 3)
-                      .map((feature: string, idx: number) => (
-                        <li
-                          key={idx}
-                          className="flex items-center gap-2 text-sm text-muted-foreground"
-                        >
-                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                          {feature}
-                        </li>
-                      ))}
-                  </ul>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
-                  {Object.entries(product.specs)
-                    .slice(0, 4)
-                    .map(([key, value]) => (
-                      <div
-                        key={key}
-                        className="bg-gray-50 p-2 rounded border text-xs"
-                      >
-                        <div className="font-medium text-gray-700 capitalize">
-                          {key.replace(/([A-Z])/g, " $1")}
-                        </div>
-                        <div className="text-muted-foreground">{value}</div>
-                      </div>
-                    ))}
-                </div>
-
-                <Button
-                  className="w-full"
-                  onClick={() => handlePurchase(product)}
+            <>
+              {product.status === 1 && (
+                <Card
+                  key={product.id}
+                  className="group border hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden"
                 >
-                  Purchase
-                </Button>
-              </CardContent>
-            </Card>
+                  <div className="relative">
+                    <Image
+                      src={product.image || "/file.svg"}
+                      alt={product.name}
+                      width={400}
+                      height={300}
+                      className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {product.badge && (
+                      <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">
+                        {product.badge}
+                      </Badge>
+                    )}
+                  </div>
+
+                  <CardHeader className="p-4 border-b">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-lg">
+                          {product.name}
+                        </CardTitle>
+                        <CardDescription className="text-sm">
+                          Model: {product.model}
+                        </CardDescription>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-primary">
+                          {formatPrice(product.variants[0].price)}
+                        </div>
+                        {product.variants[0].price && (
+                          <div className="text-sm line-through text-muted-foreground">
+                            {formatPrice(
+                              product.variants[0].price +
+                                product.variants[0].price * 0.2
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-4">
+                    <div className="mb-4">
+                      <h4 className="font-medium mb-2 text-sm text-gray-700">
+                        Key Features:
+                      </h4>
+                      <ul className="space-y-1">
+                        {product.features
+                          .slice(0, 3)
+                          .map((feature: string, idx: number) => (
+                            <li
+                              key={idx}
+                              className="flex items-center gap-2 text-sm text-muted-foreground"
+                            >
+                              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                              {feature}
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
+                      {Object.entries(product.specs)
+                        .slice(0, 4)
+                        .map(([key, value]) => (
+                          <div
+                            key={key}
+                            className="bg-gray-50 p-2 rounded border text-xs"
+                          >
+                            <div className="font-medium text-gray-700 capitalize">
+                              {key.replace(/([A-Z])/g, " $1")}
+                            </div>
+                            <div className="text-muted-foreground">{value}</div>
+                          </div>
+                        ))}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
+                      {Object.entries(
+                        (product.variants || []).reduce(
+                          (acc: Record<string, string[]>, v: any) => {
+                            Object.entries(v).forEach(([key, val]) => {
+                              if (key.toLowerCase() === "price") return; // hide price
+                              const str = String(val);
+                              if (!acc[key]) acc[key] = [];
+                              if (!acc[key].includes(str)) acc[key].push(str); // unique values
+                            });
+                            return acc;
+                          },
+                          {}
+                        )
+                      )
+                        .slice(0, 4) // show first 4 pairs; remove this to show all
+                        .map(([key, values]) => (
+                          <div
+                            key={key}
+                            className="bg-gray-50 p-2 rounded border text-xs"
+                          >
+                            <div className="font-medium text-gray-700 capitalize">
+                              {key.replace(/([A-Z])/g, " $1")}
+                            </div>
+                            <div className="text-muted-foreground">
+                              {(values as string[]).join(", ")}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+
+                    <Button
+                      className="w-full"
+                      onClick={() => handlePurchase(product)}
+                    >
+                      Purchase
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </>
           ))}
         </div>
       </div>
 
-      {/* 🔽 Variation Form Modal */}
+      {/* Variation Form Modal */}
+
       <Dialog open={showVariationForm} onOpenChange={setShowVariationForm}>
-        <DialogContent>
+        <DialogContent aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>
               Select Variations for {selectedProduct?.name}
             </DialogTitle>
+            <DialogDescription>
+              Please choose a variant before proceeding to purchase.
+            </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Select Capacity</label>
-              <Select onValueChange={setSelectedCapacity}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose Capacity" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="3kW">3kW</SelectItem>
-                  <SelectItem value="5kW">5kW</SelectItem>
-                  <SelectItem value="10kW">10kW</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          {selectedProduct?.variants && selectedProduct.variants.length > 0 ? (
+            <div className="space-y-4">
+              <div className="flex gap-5 items-center">
+                <div>
+                  <label className="text-sm font-medium">Select Variant</label>
+                  <Select
+                    onValueChange={(label) => {
+                      setSelectedVariantLabel(label); // Store in state
+                      const found = selectedProduct.variants.find(
+                        (variant: any) => {
+                          const variantLabel = Object.entries(variant)
+                            .filter(([key]) => key !== "price")
+                            .map(([_, val]) => `${val}`)
+                            .join(" - ");
+                          return variantLabel === label;
+                        }
+                      );
+                      setVariantPrice(found ? found.price : null);
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose Variant" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {selectedProduct.variants.map(
+                        (variant: any, idx: number) => {
+                          const label = Object.entries(variant)
+                            .filter(([key]) => key !== "price")
+                            .map(([_, val]) => `${val}`)
+                            .join(" - ");
+                          return (
+                            <SelectItem key={idx} value={label}>
+                              {label}
+                            </SelectItem>
+                          );
+                        }
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div>
-              <label className="text-sm font-medium">Installation Type</label>
-              <Select onValueChange={setInstallationType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="rooftop">Rooftop</SelectItem>
-                  <SelectItem value="ground-mounted">Ground Mounted</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <div className="h-2">
+                  {variantPrice && (
+                    <div className="text-lg font-bold text-primary">
+                      Price: {formatPrice(variantPrice)}
+                    </div>
+                  )}
+                </div>
+              </div>
 
-            <Button className="w-full mt-4" onClick={handleVariationSubmit}>
-              Submit & Proceed
-            </Button>
-          </div>
+              <Button
+                className="w-full mt-4"
+                onClick={() => {
+                  if (selectedVariantLabel) {
+                    handleVariationSubmit(selectedVariantLabel); // Use stored value
+                  }
+                }}
+                disabled={!selectedVariantLabel} // Disable until selection
+              >
+                Submit & Proceed
+              </Button>
+            </div>
+          ) : (
+            <div>No variations available.</div>
+          )}
         </DialogContent>
       </Dialog>
     </section>

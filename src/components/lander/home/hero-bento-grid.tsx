@@ -133,14 +133,14 @@ const items = [
     icon: <IconWindmill className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Ozone Sterilizer",
+    title: "Ozo3",
     description: "Removes 95% pesticides from food and utensils",
     header: (
       <Image
         src={
           "https://images.unsplash.com/photo-1623682687595-d10051d8bd73?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         }
-        alt="Ozone Sterilizer"
+        alt="Ozo3"
         className="w-full h-[160px] border rounded-xl"
         width={200}
         height={200}
