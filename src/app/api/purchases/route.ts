@@ -81,6 +81,8 @@ export async function POST(request: NextRequest) {
       name: body.name,
       model: body.model,
       selectedVariant: body.selectedVariant ?? null,
+      paid: 0, //0 means not paid ,1 means paid change it later for admin
+      quantity: body.quantity || 1,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
