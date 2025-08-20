@@ -33,23 +33,21 @@ export const featuredProducts = [
     badge: "Green Energy",
     variations: true,
     variants: [
-      { placetype: "Residential", kw: 3, type: "Mono PERC", price: 28499 },
+      { placetype: "Residential", type: "Mono PERC", price: 28499 },
       {
         placetype: "Common Residential",
-        kw: 10,
         type: "Mono PERC",
         price: 89999,
       },
-      { placetype: "Commercial", kw: 5, type: "Mono PERC", price: 46999 },
+      { placetype: "Commercial", type: "Mono PERC", price: 46999 },
       {
         placetype: "Captive/Ground Mounted",
-        kw: 10,
         type: "Mono PERC",
         price: 89999,
       },
-      { placetype: "Sell to DISCOM", kw: 3, type: "Mono PERC", price: 28499 },
-      { placetype: "Third party sell", kw: 5, type: "Mono PERC", price: 46999 },
-      { placetype: "Industrial", kw: 10, type: "Mono PERC", price: 89999 },
+      { placetype: "Sell to DISCOM", type: "Mono PERC", price: 28499 },
+      { placetype: "Third party sell", type: "Mono PERC", price: 46999 },
+      { placetype: "Industrial", type: "Mono PERC", price: 89999 },
     ],
   },
 
@@ -134,7 +132,7 @@ export const featuredProducts = [
     variations: true,
     variants: [
       { type: "BLDC", hp: "0.25 HP", price: 39999 },
-      { type: "Regular", hp: "1 HP", price: 49999 },
+      { type: "Solar", hp: "1 HP", price: 49999 },
     ],
   },
 
@@ -276,8 +274,10 @@ export const featuredProducts = [
     badge: "Energy Saver",
     variations: true,
     variants: [
-      { type: "BLDC", color: "White", size: "1200 mm", price: 4999 },
-      { type: "Regular", color: "Brown", size: "1200 mm", price: 4999 },
+      { type: "BLDC", color: "White", size: "1200 mm", price: 5999 },
+      { type: "BLDC", color: "Brown", size: "1200 mm", price: 4999 },
+      { type: "Regular", color: "White", size: "1200 mm", price: 6999 },
+      { type: "Regular", color: "Brown", size: "1200 mm", price: 5999 },
     ],
   },
 
