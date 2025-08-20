@@ -1,7 +1,12 @@
+import Purchases from "@/components/dashboard/purchases/purchases";
 import React from "react";
 
-const PurchasedProducts: React.FC = () => {
-  return <div>PurchasedProducts</div>;
+const page = () => {
+  return (
+    <>
+      <Purchases />
+    </>
+  );
 };
 
-export default PurchasedProducts;
+export default page;
