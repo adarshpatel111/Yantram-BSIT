@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/db";
 import { auth } from "@/lib/auth";
+import { withRoleCheck } from "@/lib/withRoleCheck";
 
-export async function GET(req: NextRequest) {
+async function GetUsers(req: NextRequest) {
   const session = await auth.api.getSession({
     headers: req.headers,
   });
@@ -22,7 +23,13 @@ export async function GET(req: NextRequest) {
   const skip = (page - 1) * limit;
 
   const [users, count] = await Promise.all([
-    db.collection("user").find({}).skip(skip).limit(limit).toArray(),
+    db
+      .collection("user")
+      .find({})
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .toArray(),
     db.collection("user").countDocuments(),
   ]);
 
@@ -36,3 +43,5 @@ export async function GET(req: NextRequest) {
     },
   });
 }
+
+export const GET = withRoleCheck(["user", "admin"])(GetUsers);
