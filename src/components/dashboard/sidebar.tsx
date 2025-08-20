@@ -29,6 +29,10 @@ const data = {
           title: "Purchased Products",
           url: "/dashboard/purchased-products",
         },
+        {
+          title: "Products",
+          url: "/dashboard/products",
+        },
       ],
     },
   ],
