@@ -4,6 +4,8 @@ export interface IUser {
   email: string;
   emailVerified: boolean;
   image?: string;
+  phone?: string;
+  role: string;
   createdAt: Date;
   updatedAt: Date;
   // optionally add plugin‑specific or custom fields here
