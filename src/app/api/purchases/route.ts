@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/db";
 import { ObjectId } from "mongodb";
+import { withRoleCheck } from "@/lib/withRoleCheck";
 import { auth } from "@/lib/auth";
 
-export async function GET(req: NextRequest) {
-  const session = await auth.api.getSession({
-    headers: req.headers,
-  });
-
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export async function getPurchases(req: NextRequest) {
   const page = Math.max(parseInt(req.nextUrl.searchParams.get("page") || "1"));
   const limit = Math.max(
     parseInt(req.nextUrl.searchParams.get("limit") || "10")
@@ -32,13 +25,11 @@ export async function GET(req: NextRequest) {
   });
 }
 
-export async function POST(request: NextRequest) {
+async function createPurchases(request: NextRequest) {
   const session = await auth.api.getSession({ headers: request.headers });
-
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
   try {
     const body = await request.json();
 
@@ -112,3 +103,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
+export const GET = withRoleCheck(["user", "admin"])(getPurchases);
+export const POST = withRoleCheck(["user", "admin"])(createPurchases);
