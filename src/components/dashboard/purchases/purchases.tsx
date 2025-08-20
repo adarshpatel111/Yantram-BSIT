@@ -101,7 +101,7 @@ const Purchases = () => {
 
   return (
     <div className="p-4">
-      <Button onClick={() => setOpen(true)}>New Purchase</Button>
+      <Button onClick={() => setOpen(true)}>+ New Purchase</Button>
 
       <Dialog
         open={open}
