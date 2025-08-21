@@ -6,6 +6,7 @@ export interface IUser {
   image?: string;
   phone?: string;
   role: string;
+  branch: string;
   createdAt: Date;
   updatedAt: Date;
   // optionally add plugin‑specific or custom fields here
