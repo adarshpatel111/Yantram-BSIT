@@ -13,6 +13,7 @@ export type IPurchase = {
   email: string;
   aadharNumber: string;
   variant: "Residential" | "Commercial" | string;
+  selectedVariant?: { [key: string]: any };
   files: Record<string, unknown>;
   filePreviews: {
     lightBill?: string;
