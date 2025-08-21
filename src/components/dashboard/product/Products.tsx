@@ -31,12 +31,12 @@ import { Star } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "@/lib/auth-client";
+import { Branches } from "../branches";
 
 export default function Products() {
   const router = useRouter();
   const sessionData = useSession();
   const queryClient = useQueryClient();
-  const dummyBranches = ["Bharuch", "Vadodara", "Surat", "Ahmedabad"];
 
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [showVariationForm, setShowVariationForm] = useState(false);
@@ -53,7 +53,7 @@ export default function Products() {
     queryKey: ["purchasedProducts", userId],
     queryFn: async () => {
       const res = await axios.get(`/api/purchases?userId=${userId}`);
-      return res.data
+      return res.data.data
         .filter((purchase: any) => purchase.userId === userId)
         .map((purchase: any) => purchase.productId);
     },
@@ -70,7 +70,7 @@ export default function Products() {
         model: selectedProduct?.model,
         branch: selectedBranch,
       });
-      return res.data;
+      return res.data.data;
     },
     onSuccess: (_, productId) => {
       queryClient.setQueryData<string[]>(
@@ -227,9 +227,9 @@ export default function Products() {
                       <SelectValue placeholder="Choose Branch" />
                     </SelectTrigger>
                     <SelectContent>
-                      {dummyBranches.map((branch) => (
-                        <SelectItem key={branch} value={branch}>
-                          {branch}
+                      {Branches.map((branch) => (
+                        <SelectItem key={branch.key} value={branch.label}>
+                          {branch.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
