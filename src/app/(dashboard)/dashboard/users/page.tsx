@@ -6,6 +6,7 @@ import { useState } from "react";
 import { DataTable } from "./data-table";
 import { UsersPagination } from "./pagination";
 import { columns } from "./columns";
+import PageLimitSelector from "@/components/PageLimitSelector";
 
 // Fetch function with page + limit
 const fetchUsers = async ({ page, limit }: { page: number; limit: number }) => {
@@ -15,7 +16,7 @@ const fetchUsers = async ({ page, limit }: { page: number; limit: number }) => {
 
 const UsersPage: React.FC = () => {
   const [page, setPage] = useState(1);
-  const limit = 5;
+  const [limit, setLimit] = useState(5);
 
   const { data, isPending } = useQuery({
     queryKey: ["users", page, limit],
@@ -34,13 +35,15 @@ const UsersPage: React.FC = () => {
         data={data?.data || []}
         key={`users-table-${page}`}
       />
-
-      {/* Dynamic Pagination */}
-      <UsersPagination
-        currentPage={page}
-        totalPages={data?.meta.pages || 1}
-        onPageChange={(newPage) => setPage(newPage)}
-      />
+      <div className="w-full flex items-center justify-between">
+        <PageLimitSelector limit={limit} setLimit={setLimit} />
+        {/* Dynamic Pagination */}
+        <UsersPagination
+          currentPage={page}
+          totalPages={data?.meta.pages || 1}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
+      </div>
     </div>
   );
 };
