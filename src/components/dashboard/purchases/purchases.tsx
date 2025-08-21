@@ -22,8 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Purchased from "@/components/dashboard/purchases/purchased";
-
-const dummyBranches = ["Bharuch", "Vadodara", "Surat", "Ahmedabad"];
+import { Branches } from "../branches";
 
 const purchaseSchema = z.object({
   branch: z.string().min(1, "Branch is required"),
@@ -128,9 +127,9 @@ const Purchases = () => {
                     <SelectValue placeholder="Select branch" />
                   </SelectTrigger>
                   <SelectContent>
-                    {dummyBranches.map((branch, idx) => (
-                      <SelectItem key={idx} value={branch}>
-                        {branch}
+                    {Branches.map((branch) => (
+                      <SelectItem key={branch.key} value={branch.label}>
+                        {branch.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
