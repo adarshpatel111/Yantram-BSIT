@@ -104,5 +104,7 @@ async function createPurchases(request: NextRequest) {
   }
 }
 
-export const GET = withRoleCheck(["user", "admin"])(getPurchases);
-export const POST = withRoleCheck(["user", "admin"])(createPurchases);
+export const GET = withRoleCheck(["user", "admin", "manager"])(getPurchases);
+export const POST = withRoleCheck(["user", "admin", "manager"])(
+  createPurchases
+);
