@@ -23,6 +23,12 @@ export const auth = betterAuth({
         defaultValue: "user",
         input: false,
       },
+      branch: {
+        type: "string",
+        required: false,
+        defaultValue: null,
+        input: false,
+      },
     },
   },
   session: {
