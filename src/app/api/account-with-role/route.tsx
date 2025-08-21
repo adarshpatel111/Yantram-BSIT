@@ -19,4 +19,4 @@ async function createAccount(req: NextRequest) {
   return NextResponse.json({ user: newUser });
 }
 
-export const POST = withRoleCheck(["admin"])(createAccount);
+export const POST = withRoleCheck(["admin", "manager"])(createAccount);
