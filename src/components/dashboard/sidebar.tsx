@@ -13,51 +13,55 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-const data = {
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboard,
-      isActive: true,
-      items: [
-        {
-          title: "Dashboard",
-          url: "/dashboard",
-        },
-        {
-          title: "Purchased Products",
-          url: "/dashboard/purchased-products",
-        },
-        {
-          title: "Products",
-          url: "/dashboard/products",
-        },
-        {
-          title: "Users",
-          url: "/dashboard/users",
-        },
-        {
-          title: "Purchases",
-          url: "/dashboard/purchases",
-        },
-        {
-          title: "Accounts",
-          url: "/dashboard/accounts",
-        },
-      ],
-    },
-  ],
-};
+const navConfig = [
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: LayoutDashboard,
+    isActive: true,
+    items: [
+      {
+        title: "Dashboard",
+        url: "/dashboard",
+        roles: ["admin", "manager", "user"],
+      },
+      {
+        title: "Purchased Products",
+        url: "/dashboard/purchased-products",
+        roles: ["user"],
+      },
+      { title: "Products", url: "/dashboard/products", roles: ["user"] },
+      { title: "Users", url: "/dashboard/users", roles: ["admin", "manager"] },
+      {
+        title: "Purchases",
+        url: "/dashboard/purchases",
+        roles: ["admin", "manager"],
+      },
+      {
+        title: "Accounts",
+        url: "/dashboard/accounts",
+        roles: ["admin"],
+      },
+    ],
+  },
+];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  userRole = "user",
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { userRole?: string }) {
+  const filteredNav = navConfig.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => item.roles.includes(userRole)),
+  }));
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarHeaderNav />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={filteredNav} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
