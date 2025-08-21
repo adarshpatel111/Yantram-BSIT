@@ -33,7 +33,7 @@ interface Purchase {
 
 const fetchPurchases = async (): Promise<Purchase[]> => {
   const { data } = await axios.get("/api/purchases");
-  return data;
+  return data.data;
 };
 
 const Purchased = () => {
@@ -61,14 +61,17 @@ const Purchased = () => {
     );
   }
 
+  const sortedData = [...data].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
   return (
     <div className="p-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {data.map((purchase) => (
+      {sortedData.map((purchase) => (
         <Card
           key={purchase._id}
           className="rounded-2xl shadow-md hover:shadow-lg transition group overflow-hidden"
         >
-          {/* Product header with primary colors */}
           <div className="h-40 bg-gradient-to-r from-primary to-primary-200 flex items-center justify-center">
             <span className="text-4xl font-bold text-white capitalize">
               {purchase.productId}
@@ -80,26 +83,79 @@ const Purchased = () => {
               <h2 className="text-lg font-semibold truncate">
                 {purchase.name || purchase.productId}
               </h2>
-              {purchase.model && (
-                <p className="text-sm text-gray-500">Model: {purchase.model}</p>
-              )}
-              {purchase.branch && (
-                <p className="text-sm text-gray-500">
-                  Branch: {purchase.branch}
-                </p>
-              )}
-              {purchase.capacity && (
-                <p className="text-sm text-gray-500">
-                  Capacity: {purchase.capacity}
-                </p>
-              )}
-              {purchase.kw && (
-                <p className="text-sm text-gray-500">KW: {purchase.kw}</p>
-              )}
-              {purchase.price && (
-                <p className="text-sm font-medium text-gray-800">
-                  ₹{purchase.price.toLocaleString()}
-                </p>
+
+              {/* ✅ Special case for solar-panel */}
+              {purchase.productId === "solar-panel" ? (
+                <div className="space-y-1 text-sm text-gray-600">
+                  {purchase.fullName && <p>Full Name: {purchase.fullName}</p>}
+                  {purchase.contactNumber && (
+                    <p>Contact: {purchase.contactNumber}</p>
+                  )}
+                  {purchase.email && <p>Email: {purchase.email}</p>}
+                  {purchase.consumerNumber && (
+                    <p>Consumer No: {purchase.consumerNumber}</p>
+                  )}
+                  {purchase.discom && <p>Discom: {purchase.discom}</p>}
+                  {purchase.aadharNumber && (
+                    <p>Aadhar: {purchase.aadharNumber}</p>
+                  )}
+                  {purchase.kw && <p>KW: {purchase.kw}</p>}
+                  {purchase?.selectedVariant &&
+                    Object.entries(purchase.selectedVariant).map(
+                      ([key, value]) => (
+                        <p key={key} className="capitalize">
+                          {key}:{" "}
+                          {typeof value === "number"
+                            ? `₹${value.toLocaleString()}`
+                            : value}
+                        </p>
+                      )
+                    )}
+                </div>
+              ) : (
+                <>
+                  {purchase.model && (
+                    <p className="text-sm text-gray-500">
+                      Model: {purchase.model}
+                    </p>
+                  )}
+                  {purchase.branch && (
+                    <p className="text-sm text-gray-500">
+                      Branch: {purchase.branch}
+                    </p>
+                  )}
+
+                  {/* ✅ Generic variant renderer */}
+                  {purchase?.selectedVariant ? (
+                    <div className="space-y-1 text-sm text-gray-600">
+                      {Object.entries(purchase.selectedVariant).map(
+                        ([key, value]) => (
+                          <p key={key} className="capitalize">
+                            {key}:{" "}
+                            {typeof value === "number"
+                              ? `₹${value.toLocaleString()}`
+                              : value}
+                          </p>
+                        )
+                      )}
+                    </div>
+                  ) : purchase?.variant ? (
+                    <p className="text-sm text-gray-500">
+                      Variant: {purchase?.variant}
+                    </p>
+                  ) : null}
+
+                  {purchase.capacity && (
+                    <p className="text-sm text-gray-500">
+                      Capacity: {purchase.capacity}
+                    </p>
+                  )}
+                  {purchase.price && (
+                    <p className="text-sm font-medium text-gray-800">
+                      ₹{purchase.price.toLocaleString()}
+                    </p>
+                  )}
+                </>
               )}
             </div>
 
