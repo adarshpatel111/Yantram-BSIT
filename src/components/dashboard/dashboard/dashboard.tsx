@@ -40,10 +40,11 @@ const Dashboard = () => {
 
     return (
       <div className="max-w-4xl mx-auto mt-10 px-4">
-        <Card className="shadow-lg border-0 bg-card/70 backdrop-blur-sm rounded-2xl">
+        {/* Profile Card */}
+        <Card className="shadow-md border-0 rounded-2xl hover:shadow-xl transition relative">
           <CardContent className="p-6 flex flex-col items-center space-y-4">
             <div className="flex items-center space-x-2">
-              <User className="h-5 w-5 text-muted-foreground" />
+              <User className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">
                 {session?.user?.name || "User"}
               </h2>
@@ -57,9 +58,10 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
+        {/* Purchases Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
           <Card
-            className="shadow-md border-0 rounded-2xl cursor-pointer hover:shadow-xl transition"
+            className="shadow-md border-0 rounded-2xl hover:shadow-xl transition relative cursor-pointer"
             onClick={() => router.push("/dashboard/purchased-products")}
           >
             <CardContent className="p-6 flex flex-col items-center justify-center">
@@ -69,23 +71,28 @@ const Dashboard = () => {
               ) : isError ? (
                 <p className="text-red-500">Failed to load purchases</p>
               ) : (
-                <p className="text-lg font-semibold">
-                  You have{" "}
-                  <span className="text-primary">{data?.length || 0}</span>{" "}
-                  purchases
-                </p>
+                <>
+                  <p className="text-lg font-semibold">Total Purchases</p>
+                  <p className="text-3xl font-bold mt-2">{data?.length || 0}</p>
+                </>
               )}
             </CardContent>
-          </Card>
-        </div>
 
-        <div className="flex justify-center mt-6">
-          <Button
-            onClick={() => router.push("/dashboard/purchased-products")}
-            className="px-6 py-3 text-lg rounded-xl cursor-pointer"
-          >
-            View Purchased Products
-          </Button>
+            {/* Floating Arrow Button */}
+            <div className="absolute bottom-3 right-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push("/dashboard/purchased-products");
+                }}
+                className="transition-transform duration-300 ease-in-out hover:rotate-45 hover:translate-x-1 hover:text-black"
+              >
+                <ArrowUpRight className="w-5 h-5 text-gray-500 hover:text-black" />
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
     );
