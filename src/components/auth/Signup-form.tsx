@@ -27,6 +27,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { redirect } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+export const Branches = [
+  { key: "bharuch", label: "Bharuch" },
+  { key: "vadodara", label: "Vadodara" },
+  { key: "surat", label: "Surat" },
+  { key: "ahmedabad", label: "Ahmedabad" },
+];
 
 const formSchema = z.object({
   username: z.string().min(3, {
@@ -37,6 +51,9 @@ const formSchema = z.object({
   }),
   useremail: z.string().email({
     message: "Enter a valid email.",
+  }),
+  branch: z.string().min(1, {
+    message: "Branch is required.",
   }),
   password: z.string().min(6, {
     message: "Password must be at least 6 characters.",
@@ -53,6 +70,7 @@ export default function SignupForm() {
       username: "",
       userpnumber: "",
       useremail: "",
+      branch: "",
       password: "",
     },
   });
@@ -65,6 +83,7 @@ export default function SignupForm() {
         email: data.useremail,
         password: data.password,
         phone: data.userpnumber,
+        branch: data.branch,
       });
       console.log("result", res);
       form.reset();
@@ -101,6 +120,7 @@ export default function SignupForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Full Name */}
             <FormField
               control={form.control}
               name="username"
@@ -114,6 +134,8 @@ export default function SignupForm() {
                 </FormItem>
               )}
             />
+
+            {/* Phone Number */}
             <FormField
               control={form.control}
               name="userpnumber"
@@ -127,6 +149,8 @@ export default function SignupForm() {
                 </FormItem>
               )}
             />
+
+            {/* Email */}
             <FormField
               control={form.control}
               name="useremail"
@@ -140,6 +164,37 @@ export default function SignupForm() {
                 </FormItem>
               )}
             />
+
+            {/* Branch Selection */}
+            <FormField
+              control={form.control}
+              name="branch"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Branch</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a branch" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Branches.map((branch) => (
+                        <SelectItem key={branch.key} value={branch.key}>
+                          {branch.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Password */}
             <FormField
               control={form.control}
               name="password"
@@ -170,15 +225,17 @@ export default function SignupForm() {
                 </FormItem>
               )}
             />
+
+            {/* Submit */}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
-                <>
-                  <Loader className="w-4 h-4 mr-2 animate-spin" />
-                </>
+                <Loader className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 "Submit"
               )}
             </Button>
+
+            {/* Redirect */}
             <div className="w-full flex justify-center items-center text-sm">
               Already have an account?{" "}
               <Link href="/login" className="underline ml-1">
