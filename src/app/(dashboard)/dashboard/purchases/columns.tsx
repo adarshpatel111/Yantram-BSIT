@@ -33,16 +33,30 @@ export function getColumns(data: IPurchase[]): ColumnDef<IPurchase>[] {
     },
   ];
 
-  const possibleColumns: ColumnDef<IPurchase>[] = [
-    { accessorKey: "_id", header: "ID" },
+  // ✅ User detail columns (always on top)
+  const userColumns: ColumnDef<IPurchase>[] = [
+    {
+      id: "userDetails.name",
+      header: "User Name",
+      cell: ({ row }) => <span>{row.original.userDetails?.name ?? "-"}</span>,
+    },
+    {
+      id: "userDetails.email",
+      header: "Email",
+      cell: ({ row }) => <span>{row.original.userDetails?.email ?? "-"}</span>,
+    },
+    {
+      id: "userDetails.phone",
+      header: "Phone",
+      cell: ({ row }) => <span>{row.original.userDetails?.phone ?? "-"}</span>,
+    },
+  ];
+
+  // ✅ Purchase detail columns
+  const purchaseColumns: ColumnDef<IPurchase>[] = [
     { accessorKey: "name", header: "Product Name" },
-    { accessorKey: "fullName", header: "Full Name" },
-    { accessorKey: "email", header: "Email" },
-    { accessorKey: "contactNumber", header: "Contact Number" },
-    { accessorKey: "consumerNumber", header: "Consumer No." },
-    { accessorKey: "discom", header: "Discom" },
-    { accessorKey: "kw", header: "KW" },
-    { accessorKey: "variant", header: "Variant" },
+    { accessorKey: "model", header: "Model" },
+    { accessorKey: "quantity", header: "Quantity" },
     {
       accessorKey: "createdAt",
       header: "Purchase Date",
@@ -53,6 +67,24 @@ export function getColumns(data: IPurchase[]): ColumnDef<IPurchase>[] {
     },
   ];
 
+  // ✅ Variant columns (dynamic)
+  const variantKeys = new Set(
+    data.flatMap((item) =>
+      item.selectedVariant ? Object.keys(item.selectedVariant) : []
+    )
+  );
+
+  const variantColumns: ColumnDef<IPurchase>[] = Array.from(variantKeys).map(
+    (key) => ({
+      id: `selectedVariant.${key}`,
+      header: key.charAt(0).toUpperCase() + key.slice(1),
+      cell: ({ row }) => (
+        <span>{(row.original as any).selectedVariant?.[key] ?? "-"}</span>
+      ),
+    })
+  );
+
+  // ✅ Actions
   const actionColumn: ColumnDef<IPurchase> = {
     id: "Actions",
     header: "Actions",
@@ -77,35 +109,12 @@ export function getColumns(data: IPurchase[]): ColumnDef<IPurchase>[] {
     ),
   };
 
-  // 🔹 detect keys in root level
-  const availableKeys = new Set(data.flatMap((item) => Object.keys(item)));
-
-  // 🔹 detect keys in selectedVariant
-  const variantKeys = new Set(
-    data.flatMap((item) =>
-      item.selectedVariant ? Object.keys(item.selectedVariant) : []
-    )
-  );
-
-  // 🔹 filter root-level columns
-  const filteredColumns = possibleColumns.filter(
-    (col): col is ColumnDef<IPurchase> => {
-      return "accessorKey" in col && availableKeys.has(col.accessorKey);
-    }
-  );
-
-  // 🔹 build dynamic variant columns
-  const variantColumns: ColumnDef<IPurchase>[] = Array.from(variantKeys).map(
-    (key) => ({
-      id: `selectedVariant.${key}`,
-      header: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize
-      cell: ({ row }) => {
-        return (
-          <span>{(row.original as any).selectedVariant?.[key] ?? "-"}</span>
-        );
-      },
-    })
-  );
-
-  return [...baseColumns, ...filteredColumns, ...variantColumns, actionColumn];
+  // ✅ Final order: base → user → purchase → variants → actions
+  return [
+    ...baseColumns,
+    ...userColumns,
+    ...purchaseColumns,
+    ...variantColumns,
+    actionColumn,
+  ];
 }
