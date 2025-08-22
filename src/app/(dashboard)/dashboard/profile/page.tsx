@@ -46,16 +46,18 @@ const ProfilePage = () => {
           className="absolute inset-0 w-full h-full object-cover rounded-b-2xl"
         />
 
-        <Avatar className="relative h-28 w-28 mt-48 rounded-full overflow-hidden border-0">
+        <Avatar className="h-24 w-24 border-4 mt-48 border-background bg-gradient-to-b from-gray-400 to-white">
           <AvatarImage
             src={data?.user?.image ?? ""}
             alt={data?.user?.name || "User"}
-            className="object-cover w-full h-full transition-transform duration-300 ease-in-out hover:scale-105"
           />
-          <AvatarFallback className="watercolor-fallback">
-            <span className="flex items-center justify-center h-full w-full text-6xl font-extrabold text-white">
-              {data?.user?.name?.charAt(0)?.toUpperCase() || "U"}
-            </span>
+          <AvatarFallback
+            className="flex items-center justify-center text-5xl font-extrabold 
+               bg-gradient-to-r from-gray-100 via-gray-400 to-gray-700 
+               bg-clip-text text-transparent 
+               [text-shadow:1px_1px_2px_rgba(0,0,0,0.4)]"
+          >
+            {data?.user?.name?.charAt(0)?.toUpperCase() || "U"}
           </AvatarFallback>
         </Avatar>
       </div>
