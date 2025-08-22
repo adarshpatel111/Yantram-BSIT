@@ -26,9 +26,9 @@ async function GetUsers(req: NextRequest) {
   let query: Record<string, any> = {};
 
   if (role === "manager" && branch) {
-    query.branch = branch; // restrict to manager's branch
+    query.branch = branch;
+    query.role = { $ne: "manager" };
   }
-  // Admins and users without branch can see all
 
   const [users, count] = await Promise.all([
     db
