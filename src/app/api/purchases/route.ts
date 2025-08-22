@@ -4,25 +4,111 @@ import { ObjectId } from "mongodb";
 import { withRoleCheck } from "@/lib/withRoleCheck";
 import { auth } from "@/lib/auth";
 
-export async function getPurchases(req: NextRequest) {
-  const page = Math.max(parseInt(req.nextUrl.searchParams.get("page") || "1"));
+async function getPurchases(request: NextRequest, user: any) {
+  console.log("Incoming user:", user);
+
+  const page = Math.max(
+    parseInt(request.nextUrl.searchParams.get("page") || "1"),
+    1
+  );
   const limit = Math.max(
-    parseInt(req.nextUrl.searchParams.get("limit") || "10")
+    parseInt(request.nextUrl.searchParams.get("limit") || "10"),
+    1
   );
   const skip = (page - 1) * limit;
-  const [purchases, count] = await Promise.all([
-    db.collection("purchases").find({}).skip(skip).limit(limit).toArray(),
-    db.collection("purchase").countDocuments(),
-  ]);
-  return NextResponse.json({
-    data: purchases,
-    meta: {
-      page,
-      limit,
-      pages: Math.ceil(count / limit),
-      count,
+
+  const role = user?.user?.role;
+  const branch = user?.user?.branch;
+  const userId = user?.user?.id;
+
+  const pipeline: any[] = [
+    { $skip: skip },
+    { $limit: limit },
+    {
+      $lookup: {
+        from: "user",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userDetails",
+      },
+    },
+    { $unwind: "$userDetails" },
+  ];
+
+  if (role === "manager") {
+    pipeline.unshift({
+      $match: { branch: new RegExp(`^${branch}$`, "i") },
+    });
+  } else if (role === "user") {
+    pipeline.unshift({
+      $match: { userId: new ObjectId(userId) },
+    });
+  }
+
+  pipeline.push({
+    $addFields: {
+      userDetails: {
+        _id: "$userDetails._id",
+        name: "$userDetails.name",
+        email: "$userDetails.email",
+        phone: "$userDetails.phone",
+        branch: "$userDetails.branch",
+      },
     },
   });
+
+  console.log("Pipeline:", JSON.stringify(pipeline, null, 2));
+
+  try {
+    const purchases = await db
+      .collection("purchases")
+      .aggregate(pipeline)
+      .toArray();
+
+    let countPipeline: any[] = [
+      {
+        $lookup: {
+          from: "user",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      { $unwind: "$userDetails" },
+    ];
+
+    if (role === "manager") {
+      countPipeline.unshift({
+        $match: { branch: new RegExp(`^${branch}$`, "i") },
+      });
+    } else if (role === "user") {
+      countPipeline.unshift({
+        $match: { userId: new ObjectId(userId) },
+      });
+    }
+
+    const totalDocs = await db
+      .collection("purchases")
+      .aggregate([...countPipeline, { $count: "total" }])
+      .toArray();
+    const total = totalDocs[0]?.total || 0;
+
+    return NextResponse.json({
+      data: purchases,
+      meta: {
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+        count: total,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching purchases:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }
 
 async function createPurchases(request: NextRequest) {
