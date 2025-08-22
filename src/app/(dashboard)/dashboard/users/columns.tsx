@@ -39,11 +39,6 @@ export const columns: ColumnDef<IUser>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-
-  {
-    accessorKey: "_id",
-    header: "Id",
-  },
   {
     accessorKey: "name",
     header: "Name",
@@ -65,10 +60,18 @@ export const columns: ColumnDef<IUser>[] = [
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <Button size={"sm"} onClick={() => console.log(row.original)}>
+        <Button
+          size={"sm"}
+          variant="outline"
+          onClick={() => console.log(row.original)}
+        >
           <EyeIcon />
         </Button>
-        <Button size={"sm"} onClick={() => console.log(row.original)}>
+        <Button
+          size={"sm"}
+          variant="outline"
+          onClick={() => console.log(row.original)}
+        >
           <EditIcon />
         </Button>
         <DeleteModal />
