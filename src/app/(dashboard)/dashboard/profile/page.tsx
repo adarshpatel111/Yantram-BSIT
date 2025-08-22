@@ -46,15 +46,17 @@ const ProfilePage = () => {
           className="absolute inset-0 w-full h-full object-cover rounded-b-2xl"
         />
 
-        <Avatar className="h-24 w-24 border-4 mt-48 border-background ">
+        <Avatar className="h-24 w-24 border-4 mt-48 border-background bg-gradient-to-b from-gray-400 to-white">
           <AvatarImage
-            src={
-              data?.user?.image ||
-              "https://avatars.githubusercontent.com/u/112753528?s=400&u=d0689cd5aedd602ffd81cc323b3c41e44313963b&v=4"
-            }
+            src={data?.user?.image ?? ""}
             alt={data?.user?.name || "User"}
           />
-          <AvatarFallback>
+          <AvatarFallback
+            className="flex items-center justify-center text-5xl font-extrabold 
+               bg-gradient-to-r from-gray-100 via-gray-400 to-gray-700 
+               bg-clip-text text-transparent 
+               [text-shadow:1px_1px_2px_rgba(0,0,0,0.4)]"
+          >
             {data?.user?.name?.charAt(0)?.toUpperCase() || "U"}
           </AvatarFallback>
         </Avatar>
