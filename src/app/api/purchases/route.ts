@@ -5,8 +5,6 @@ import { withRoleCheck } from "@/lib/withRoleCheck";
 import { auth } from "@/lib/auth";
 
 async function getPurchases(request: NextRequest, user: any) {
-  console.log("Incoming user:", user);
-
   const page = Math.max(
     parseInt(request.nextUrl.searchParams.get("page") || "1"),
     1
@@ -56,8 +54,6 @@ async function getPurchases(request: NextRequest, user: any) {
       },
     },
   });
-
-  console.log("Pipeline:", JSON.stringify(pipeline, null, 2));
 
   try {
     const purchases = await db
