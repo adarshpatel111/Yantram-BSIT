@@ -157,7 +157,7 @@ async function createPurchases(request: NextRequest) {
 
     if (!body.branch || !body.productId) {
       return NextResponse.json(
-        { error: "Branch and productId are required" },
+        { error: "Store and productId are required" },
         { status: 400 }
       );
     }
