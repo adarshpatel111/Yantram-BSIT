@@ -9,6 +9,7 @@ import { DataTable } from "./data-table";
 import PageLimitSelector from "@/components/PageLimitSelector";
 import { authClient } from "@/lib/auth-client";
 import { getColumns } from "./columns";
+import Loader from "@/components/loader/Loader";
 
 const fetchPurchases = async ({
   page,
@@ -33,7 +34,12 @@ const PurchasesPage: React.FC = () => {
     queryFn: () => fetchPurchases({ page, limit }),
   });
 
-  if (isPending) return <div className="p-4">Loading purchases...</div>;
+  if (isPending)
+    return (
+      <div className="p-4">
+        <Loader />
+      </div>
+    );
 
   if (role !== "admin" && role !== "manager") {
     return (

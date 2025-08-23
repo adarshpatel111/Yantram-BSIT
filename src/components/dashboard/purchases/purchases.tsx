@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import Purchased from "@/components/dashboard/purchases/purchased";
 import { Branches } from "../branches";
+import { toast } from "sonner";
 
 const purchaseSchema = z.object({
   branch: z.string().min(1, "Branch is required"),
@@ -68,12 +69,25 @@ const Purchases = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Something went wrong");
+      }
+
       return res.json();
     },
     onSuccess: () => {
       reset();
       setOpen(false);
-      alert("Purchase saved successfully!");
+      toast.success("Purchase saved successfully!", {
+        description: "Your purchase has been recorded.",
+      });
+    },
+    onError: (error: any) => {
+      toast.error("Purchase failed!", {
+        description: error.message || "Please try again later.",
+      });
     },
   });
 

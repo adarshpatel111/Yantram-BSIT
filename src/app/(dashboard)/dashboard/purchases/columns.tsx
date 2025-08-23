@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { IPurchase } from "@/types/purchases";
 import { ColumnDef } from "@tanstack/react-table";
 import { EditIcon, EyeIcon } from "lucide-react";
+import { toast } from "sonner"; // 👈 import toast
 
 export function getColumns(data: IPurchase[]): ColumnDef<IPurchase>[] {
   const baseColumns: ColumnDef<IPurchase>[] = [
@@ -33,7 +34,6 @@ export function getColumns(data: IPurchase[]): ColumnDef<IPurchase>[] {
     },
   ];
 
-  // ✅ User detail columns (always on top)
   const userColumns: ColumnDef<IPurchase>[] = [
     {
       id: "userDetails.name",
@@ -52,7 +52,6 @@ export function getColumns(data: IPurchase[]): ColumnDef<IPurchase>[] {
     },
   ];
 
-  // ✅ Purchase detail columns
   const purchaseColumns: ColumnDef<IPurchase>[] = [
     { accessorKey: "name", header: "Product Name" },
     { accessorKey: "model", header: "Model" },
@@ -67,7 +66,6 @@ export function getColumns(data: IPurchase[]): ColumnDef<IPurchase>[] {
     },
   ];
 
-  // ✅ Variant columns (dynamic)
   const variantKeys = new Set(
     data.flatMap((item) =>
       item.selectedVariant ? Object.keys(item.selectedVariant) : []
@@ -84,7 +82,6 @@ export function getColumns(data: IPurchase[]): ColumnDef<IPurchase>[] {
     })
   );
 
-  // ✅ Actions
   const actionColumn: ColumnDef<IPurchase> = {
     id: "Actions",
     header: "Actions",
@@ -92,24 +89,41 @@ export function getColumns(data: IPurchase[]): ColumnDef<IPurchase>[] {
       <div className="flex gap-2">
         <Button
           size="sm"
-          onClick={() => console.log("View", row.original)}
+          onClick={() =>
+            toast.info("Viewing purchase", {
+              description: `Product: ${(row.original as any).name}`,
+            })
+          }
           variant="outline"
         >
           <EyeIcon className="w-4 h-4" />
         </Button>
         <Button
           size="sm"
-          onClick={() => console.log("Edit", row.original)}
+          onClick={() =>
+            toast("Edit action", {
+              description: `Editing ${(row.original as any).name}`,
+            })
+          }
           variant="outline"
         >
           <EditIcon className="w-4 h-4" />
         </Button>
-        <DeleteModal />
+        <DeleteModal
+          purchaseId={row.original._id}
+          onSuccess={() =>
+            toast.success("Purchase deleted", {
+              description: `${(row.original as any).name} removed successfully`,
+            })
+          }
+          onError={(err: string) =>
+            toast.error("Failed to delete", { description: err })
+          }
+        />
       </div>
     ),
   };
 
-  // ✅ Final order: base → user → purchase → variants → actions
   return [
     ...baseColumns,
     ...userColumns,

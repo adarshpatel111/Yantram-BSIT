@@ -12,6 +12,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { featuredProducts } from "@/utilities/Productdata";
+import { toast } from "sonner";
 
 export default function SolarForm({ id }: { id: string }) {
   const product = useMemo(
@@ -53,13 +54,23 @@ export default function SolarForm({ id }: { id: string }) {
       }
       return res.json();
     },
-    onSuccess: (data) => {
-      console.log("✅ Submitted successfully:", data);
-      alert("Form submitted successfully!");
+    onMutate: () => {
+      const id = toast.loading("Submitting your request...");
+      return { toastId: id };
     },
-    onError: (error: any) => {
+    onSuccess: (data, _, context) => {
+      console.log("✅ Submitted successfully:", data);
+      toast.success("Form submitted successfully!", {
+        id: context?.toastId,
+        description: "Your solar purchase request has been saved.",
+      });
+    },
+    onError: (error: any, _, context) => {
       console.error("❌ Error submitting:", error.message);
-      alert(error.message);
+      toast.error("Submission failed!", {
+        id: context?.toastId,
+        description: error.message || "Please try again later.",
+      });
     },
   });
 

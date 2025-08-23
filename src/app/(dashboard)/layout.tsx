@@ -4,6 +4,7 @@ import DashNavbar from "@/components/dashboard/dash-navbar";
 import { AppSidebar } from "@/components/dashboard/sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { Toaster } from "sonner";
 
 export default function DashboardLayout({
   children,
@@ -19,6 +20,7 @@ export default function DashboardLayout({
       <SidebarInset className="flex flex-1 flex-col">
         <DashNavbar />
         <div className="flex flex-1 flex-col gap-4 p-4 pt-14 group-has-data-[collapsible=icon]/sidebar-wrapper:pt-12">
+          <Toaster richColors position="top-center" />
           {children}
         </div>
       </SidebarInset>
