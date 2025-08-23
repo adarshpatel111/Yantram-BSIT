@@ -40,6 +40,7 @@ export default function Products() {
     string | null
   >(null);
   const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const formatPrice = (price: number) => `₹${price.toLocaleString("en-IN")}`;
 
@@ -118,8 +119,12 @@ export default function Products() {
                       alt={product.name}
                       width={400}
                       height={300}
-                      className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                      onClick={() =>
+                        setPreviewImage(product.image?.src || "/file.svg")
+                      }
                     />
+
                     {product.badge && (
                       <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">
                         {product.badge}
@@ -184,7 +189,13 @@ export default function Products() {
                             <div className="font-medium text-gray-700 capitalize">
                               {key.replace(/([A-Z])/g, " $1")}
                             </div>
-                            <div className="text-muted-foreground">{value}</div>
+                            <div className="text-muted-foreground">
+                              {typeof value === "object"
+                                ? Object.entries(value)
+                                    .map(([k, v]) => `${k}: ${v}`)
+                                    .join(", ")
+                                : value}
+                            </div>
                           </div>
                         ))}
                     </div>
@@ -232,6 +243,17 @@ export default function Products() {
           )}
         </div>
       </div>
+      <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
+        <DialogContent className="p-0 max-w-4xl w-full">
+          <Image
+            src={previewImage || ""}
+            alt="Preview"
+            width={800}
+            height={600}
+            className="w-full h-auto object-contain"
+          />
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={showVariationForm} onOpenChange={setShowVariationForm}>
         <DialogContent aria-describedby={undefined}>
