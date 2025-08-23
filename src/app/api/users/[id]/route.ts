@@ -1,32 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-type Params = {
-  params: {
-    id: string;
-  };
-};
-
-async function getUserDetails(request: NextRequest, { params }: Params) {
-  const { id } = params;
-
-  const item = { id, name: `Item ${id}` };
-
-  return NextResponse.json(item);
-}
-
-async function deleteUserDetails(request: NextRequest, { params }: Params) {
-  const { id } = params;
-
-  return NextResponse.json({ message: `Item ${id} deleted` });
-}
-
-export const GET = getUserDetails;
-export const DELETE = deleteUserDetails;
-=======
-=======
->>>>>>> Stashed changes
 import { db } from "@/db/db";
 import { auth } from "@/lib/auth";
 import { withRoleCheck } from "@/lib/withRoleCheck";
@@ -96,7 +68,3 @@ async function DeleteUser(req: NextRequest) {
 
 export const PATCH = withRoleCheck(["admin", "manager"])(UpdateUser);
 export const DELETE = withRoleCheck(["admin", "manager"])(DeleteUser);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
