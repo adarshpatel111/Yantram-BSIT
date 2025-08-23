@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { useState } from "react";
 import { IPurchase } from "@/types/purchases";
+import { toast } from "sonner";
 
 async function getPurchaseById(id: string) {
   const { data } = await axios.get(`/api/purchases/${id}`);
@@ -59,7 +60,12 @@ export default function EditPurchaseModal({
     mutationFn: (status: string) => updatePurchaseStatus(purchaseId, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["purchase", purchaseId] });
+      toast.success("Status updated successfully");
       onClose();
+    },
+    onError: (err: any) => {
+      console.error(err);
+      toast.error("Failed to update status");
     },
   });
 
