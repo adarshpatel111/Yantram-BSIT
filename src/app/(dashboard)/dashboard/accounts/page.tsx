@@ -4,9 +4,8 @@ import * as React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,113 +21,133 @@ import {
 import { Branches } from "@/components/dashboard/branches";
 import { authClient } from "@/lib/auth-client";
 
-const accountSchema = z.object({
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  phone: z
+const formSchema = z.object({
+  username: z.string().min(2, "Full name must be at least 2 characters"),
+  useremail: z.string().email("Invalid email address"),
+  userpnumber: z
     .string()
     .min(10, "Phone must be at least 10 digits")
     .regex(/^[0-9]+$/, "Phone must contain only numbers"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
   role: z.enum(["user", "admin", "manager"]),
   branch: z.string().nonempty("Please select a branch"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-type AccountFormValues = z.infer<typeof accountSchema>;
+type FormValues = z.infer<typeof formSchema>;
 
 export default function AccountPage() {
-  const { data: session } = authClient.useSession();
-  const role = session?.user?.role;
+  const router = useRouter();
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const {
     register,
     handleSubmit,
     setValue,
     reset,
     formState: { errors },
-  } = useForm<AccountFormValues>({
-    resolver: zodResolver(accountSchema),
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      phone: "",
+      username: "",
+      useremail: "",
+      userpnumber: "",
+      password: "",
       role: "user",
       branch: "",
-      password: "",
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: (data: AccountFormValues) => axios.post("/api/users", data),
-    onMutate: () => {
-      // show loading toast immediately when request starts
-      toast.loading("Creating user...");
-    },
-    onSuccess: () => {
-      toast.success("User created successfully");
+  const onSubmit = async (data: FormValues) => {
+    setIsLoading(true);
+    try {
+      const res = await authClient.signUp.email({
+        name: data.username,
+        email: data.useremail,
+        password: data.password,
+        phone: data.userpnumber,
+        branch: data.branch,
+        role: data.role,
+      });
+
+      toast.success("Account created successfully!", {
+        description: "Welcome aboard 🚀 Redirecting you to dashboard...",
+      });
+
       reset();
-    },
-    onError: (err: any) => {
-      const message = err?.response?.data?.error || "Failed to create user";
-      toast.error(message);
-    },
-  });
-
-  const onSubmit = (data: AccountFormValues) => {
-    mutation.mutate(data);
+      setIsLoading(false);
+      router.push("/dashboard");
+    } catch (error: any) {
+      toast.error("Signup failed!", {
+        description: error.message || "Something went wrong. Try again.",
+      });
+      setIsLoading(false);
+    }
   };
 
-  if (role !== "admin") {
-    return (
-      <div className="flex items-center justify-center text-3xl font-semibold">
-        Unauthorized
-      </div>
-    );
-  }
   return (
-    <div className="flex p-6">
+    <div className="flex p-6 justify-center">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl">Account Settings</CardTitle>
+          <CardTitle className="text-xl">Create Account</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-1">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="username">Full Name</Label>
               <Input
-                id="fullName"
+                id="username"
                 placeholder="Enter your full name"
-                {...register("fullName")}
+                {...register("username")}
               />
-              {errors.fullName && (
+              {errors.username && (
                 <p className="text-sm text-red-500">
-                  {errors.fullName.message}
+                  {errors.username.message}
                 </p>
               )}
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="useremail">Email</Label>
               <Input
-                id="email"
+                id="useremail"
                 type="email"
                 placeholder="you@example.com"
-                {...register("email")}
+                {...register("useremail")}
               />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
+              {errors.useremail && (
+                <p className="text-sm text-red-500">
+                  {errors.useremail.message}
+                </p>
               )}
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="userpnumber">Phone</Label>
               <Input
-                id="phone"
+                id="userpnumber"
                 type="tel"
                 placeholder="9876543210"
-                {...register("phone")}
+                {...register("userpnumber")}
               />
-              {errors.phone && (
-                <p className="text-sm text-red-500">{errors.phone.message}</p>
+              {errors.userpnumber && (
+                <p className="text-sm text-red-500">
+                  {errors.userpnumber.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter new password"
+                {...register("password")}
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -181,27 +200,8 @@ export default function AccountPage() {
               </div>
             </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter new password"
-                {...register("password")}
-              />
-              {errors.password && (
-                <p className="text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={mutation.status === "pending"}
-            >
-              {mutation.status === "pending" ? "Saving..." : "Save Changes"}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
           </form>
         </CardContent>
