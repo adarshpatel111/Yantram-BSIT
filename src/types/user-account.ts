@@ -9,7 +9,7 @@ export interface IUser {
   branch: string;
   createdAt: Date;
   updatedAt: Date;
-  // optionally add plugin‑specific or custom fields here
+  // optionally add plugin-specific or custom fields here
 }
 
 export interface ISession {
