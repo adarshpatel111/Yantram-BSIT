@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 type Params = {
   params: {
@@ -24,6 +25,8 @@ async function deleteUserDetails(request: NextRequest, { params }: Params) {
 export const GET = getUserDetails;
 export const DELETE = deleteUserDetails;
 =======
+=======
+>>>>>>> Stashed changes
 import { db } from "@/db/db";
 import { auth } from "@/lib/auth";
 import { withRoleCheck } from "@/lib/withRoleCheck";
@@ -93,4 +96,7 @@ async function DeleteUser(req: NextRequest) {
 
 export const PATCH = withRoleCheck(["admin", "manager"])(UpdateUser);
 export const DELETE = withRoleCheck(["admin", "manager"])(DeleteUser);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
