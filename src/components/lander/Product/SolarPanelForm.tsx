@@ -11,6 +11,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { featuredProducts } from "@/utilities/Productdata";
+import { toast } from "sonner";
 
 export default function SolarForm({ id }: { id: string }) {
   const product = useMemo(
@@ -72,7 +73,7 @@ export default function SolarForm({ id }: { id: string }) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
+
     const submitData = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "files") {
@@ -86,7 +87,8 @@ export default function SolarForm({ id }: { id: string }) {
       }
     });
 
-    // send `submitData` to your Next.js API route
+    toast.success("Form submitted successfully!");
+    console.log("Form Data:", formData);
   };
 
   if (!product) {
@@ -118,7 +120,6 @@ export default function SolarForm({ id }: { id: string }) {
         </div>
       )}
 
-      {/* Text Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[
           { name: "fullName", placeholder: "Full Name" },
@@ -142,8 +143,6 @@ export default function SolarForm({ id }: { id: string }) {
         ))}
       </div>
 
-      {/* File Inputs with Placeholder & Preview */}
-      {/* File Inputs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[
           { key: "lightBill", label: "Upload Latest Light Bill" },
@@ -185,6 +184,7 @@ export default function SolarForm({ id }: { id: string }) {
           </div>
         ))}
       </div>
+
       <div className="flex justify-center h-10">
         <Button
           type="submit"
