@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { featuredProducts } from "@/utilities/Productdata";
 import { toast } from "sonner";
+import { Branches } from "@/components/dashboard/branches";
 
 export default function Products() {
   const router = useRouter();
@@ -38,6 +39,7 @@ export default function Products() {
   const [selectedVariantLabel, setSelectedVariantLabel] = useState<
     string | null
   >(null);
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
 
   const formatPrice = (price: number) => `₹${price.toLocaleString("en-IN")}`;
 
@@ -50,6 +52,8 @@ export default function Products() {
       setSelectedProduct(product);
       setShowVariationForm(true);
       setVariantPrice(null);
+      setSelectedVariantLabel(null);
+      setSelectedBranch(null);
       return;
     }
     proceedToLogin(product);
@@ -64,6 +68,7 @@ export default function Products() {
       specs: product.specs,
       features: product.features,
       variation,
+      branch: selectedBranch, // Include selected branch
     };
     console.log("Purchase data:", JSON.stringify(productData, null, 2));
     router.push("/login");
@@ -235,13 +240,14 @@ export default function Products() {
               Select Variations for {selectedProduct?.name}
             </DialogTitle>
             <DialogDescription>
-              Please choose a variant before proceeding to purchase.
+              Please choose a variant and branch before proceeding.
             </DialogDescription>
           </DialogHeader>
 
           {selectedProduct?.variants && selectedProduct.variants.length > 0 ? (
             <div className="space-y-4">
               <div className="flex gap-5 items-center">
+                {/* Variant Selection */}
                 <div>
                   <label className="text-sm font-medium">Select Variant</label>
                   <Select
@@ -280,6 +286,28 @@ export default function Products() {
                   </Select>
                 </div>
 
+                {/* Branch Selection */}
+                <div>
+                  <label className="text-sm font-medium">
+                    Locate Your Store
+                  </label>
+                  <Select
+                    onValueChange={(branchKey) => setSelectedBranch(branchKey)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose Branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Branches.map((branch) => (
+                        <SelectItem key={branch.key} value={branch.key}>
+                          {branch.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Price Display */}
                 <div className="h-2">
                   {variantPrice && (
                     <div className="text-lg font-bold text-primary">
@@ -292,13 +320,15 @@ export default function Products() {
               <Button
                 className="w-full mt-4"
                 onClick={() => {
-                  if (selectedVariantLabel) {
+                  if (selectedVariantLabel && selectedBranch) {
                     handleVariationSubmit(selectedVariantLabel);
                   } else {
-                    toast.error("Please select a variant before proceeding.");
+                    toast.error(
+                      "Please select both variant and branch before proceeding."
+                    );
                   }
                 }}
-                disabled={!selectedVariantLabel}
+                disabled={!selectedVariantLabel || !selectedBranch}
               >
                 Submit & Proceed
               </Button>
