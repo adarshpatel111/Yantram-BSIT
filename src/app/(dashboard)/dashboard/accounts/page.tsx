@@ -175,7 +175,7 @@ export default function AccountPage() {
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="branch">Branch</Label>
+                <Label htmlFor="branch">Locate your store</Label>
                 <Select
                   onValueChange={(val: string) =>
                     setValue("branch", val, { shouldValidate: true })
