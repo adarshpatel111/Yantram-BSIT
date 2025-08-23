@@ -28,6 +28,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { featuredProducts } from "@/utilities/Productdata";
+import { toast } from "sonner";
 
 export default function Products() {
   const router = useRouter();
@@ -41,20 +42,16 @@ export default function Products() {
   const formatPrice = (price: number) => `₹${price.toLocaleString("en-IN")}`;
 
   const handlePurchase = (product: any) => {
-    // Always go to solar form for solar panel
     if (product.id === "solar-panel") {
       router.push(`/products/${product.id}`);
       return;
     }
-    // Show modal if variants exist
     if (product.variants && product.variants.length > 0) {
       setSelectedProduct(product);
       setShowVariationForm(true);
       setVariantPrice(null);
       return;
     }
-
-    // No variants, go straight to login
     proceedToLogin(product);
   };
 
@@ -85,6 +82,8 @@ export default function Products() {
 
     if (found) {
       proceedToLogin(selectedProduct, found);
+    } else {
+      toast.error("Please select a valid variant before proceeding.");
     }
   };
 
@@ -101,9 +100,9 @@ export default function Products() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          {featuredProducts.map((product) => (
-            <>
-              {product.status === 1 && (
+          {featuredProducts.map(
+            (product) =>
+              product.status === 1 && (
                 <Card
                   key={product.id}
                   className="group border hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden"
@@ -184,22 +183,23 @@ export default function Products() {
                           </div>
                         ))}
                     </div>
+
                     <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
                       {Object.entries(
                         (product.variants || []).reduce(
                           (acc: Record<string, string[]>, v: any) => {
                             Object.entries(v).forEach(([key, val]) => {
-                              if (key.toLowerCase() === "price") return; // hide price
+                              if (key.toLowerCase() === "price") return;
                               const str = String(val);
                               if (!acc[key]) acc[key] = [];
-                              if (!acc[key].includes(str)) acc[key].push(str); // unique values
+                              if (!acc[key].includes(str)) acc[key].push(str);
                             });
                             return acc;
                           },
                           {}
                         )
                       )
-                        .slice(0, 4) // show first 4 pairs; remove this to show all
+                        .slice(0, 4)
                         .map(([key, values]) => (
                           <div
                             key={key}
@@ -223,13 +223,10 @@ export default function Products() {
                     </Button>
                   </CardContent>
                 </Card>
-              )}
-            </>
-          ))}
+              )
+          )}
         </div>
       </div>
-
-      {/* Variation Form Modal */}
 
       <Dialog open={showVariationForm} onOpenChange={setShowVariationForm}>
         <DialogContent aria-describedby={undefined}>
@@ -249,7 +246,7 @@ export default function Products() {
                   <label className="text-sm font-medium">Select Variant</label>
                   <Select
                     onValueChange={(label) => {
-                      setSelectedVariantLabel(label); // Store in state
+                      setSelectedVariantLabel(label);
                       const found = selectedProduct.variants.find(
                         (variant: any) => {
                           const variantLabel = Object.entries(variant)
@@ -296,10 +293,12 @@ export default function Products() {
                 className="w-full mt-4"
                 onClick={() => {
                   if (selectedVariantLabel) {
-                    handleVariationSubmit(selectedVariantLabel); // Use stored value
+                    handleVariationSubmit(selectedVariantLabel);
+                  } else {
+                    toast.error("Please select a variant before proceeding.");
                   }
                 }}
-                disabled={!selectedVariantLabel} // Disable until selection
+                disabled={!selectedVariantLabel}
               >
                 Submit & Proceed
               </Button>
