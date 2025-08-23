@@ -26,7 +26,7 @@ import { Branches } from "../branches";
 import { toast } from "sonner";
 
 const purchaseSchema = z.object({
-  branch: z.string().min(1, "Branch is required"),
+  branch: z.string().min(1, "Store is required"),
   productId: z.string().min(1, "Product is required"),
   variantIndex: z.string().optional(),
 });
@@ -132,13 +132,13 @@ const Purchases = () => {
 
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div>
-                <p className="font-medium mb-1">Branch</p>
+                <p className="font-medium mb-1">Locate your store</p>
                 <Select
                   value={watch("branch")}
                   onValueChange={(val) => setValue("branch", val)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select branch" />
+                    <SelectValue placeholder="Select store" />
                   </SelectTrigger>
                   <SelectContent>
                     {Branches.map((branch) => (
