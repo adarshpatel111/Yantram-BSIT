@@ -169,13 +169,13 @@ export default function SignupForm() {
               )}
             />
 
-            {/* Branch Selection */}
+            {/* Store Selection */}
             <FormField
               control={form.control}
               name="branch"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Branch</FormLabel>
+                  <FormLabel>Store</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
