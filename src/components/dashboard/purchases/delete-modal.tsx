@@ -43,7 +43,7 @@ export function DeleteModal({ purchaseId, onSuccess }: DeleteModalProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="icon">
+        <Button variant="destructive" className="cursor-pointer" size="icon">
           <Trash className="h-4 w-4" />
         </Button>
       </AlertDialogTrigger>
@@ -58,12 +58,15 @@ export function DeleteModal({ purchaseId, onSuccess }: DeleteModalProps) {
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleteMutation.isPending}>
+          <AlertDialogCancel
+            className="cursor-pointer"
+            disabled={deleteMutation.isPending}
+          >
             Cancel
           </AlertDialogCancel>
 
           <AlertDialogAction
-            className="bg-destructive text-white hover:bg-destructive/90"
+            className="bg-destructive text-white hover:bg-destructive/90 cursor-pointer"
             onClick={() => deleteMutation.mutate()}
             disabled={deleteMutation.isPending}
           >
