@@ -27,7 +27,7 @@ const DashNavbar: React.FC = () => {
       <div className="flex items-center gap-2 px-4">
         {role === "manager" && branch && (
           <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold shadow-sm">
-            Branch: {branch.toUpperCase()}
+            Store: {branch.toUpperCase()}
           </span>
         )}
         {role === "admin" && (
