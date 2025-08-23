@@ -70,14 +70,20 @@ export const columns: ColumnDef<IUser>[] = [
         {/* Delete */}
         <DeleteModal
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
           userId={row.original._id}
 =======
+=======
+>>>>>>> Stashed changes
           userId={row.original._id} // ✅ FIXED: using _id
           trigger={
             <Button size="sm" variant="destructive">
               <TrashIcon className="w-4 h-4" />
             </Button>
           }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
           onSuccess={() =>
             toast.success("User deleted", {
