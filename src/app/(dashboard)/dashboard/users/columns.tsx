@@ -64,7 +64,7 @@ export const columns: ColumnDef<IUser>[] = [
         </Button>
         {/* Pass success + error callbacks to DeleteModal */}
         <DeleteModal
-          userId={row.original.id}
+          userId={row.original._id}
           onSuccess={() =>
             toast.success("User deleted", {
               description: `${row.original.name} has been removed.`,
