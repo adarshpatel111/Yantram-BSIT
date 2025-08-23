@@ -9,18 +9,41 @@ import { ISession } from "@/types/user-account";
 import { SessionCard } from "@/components/dashboard/profile/session-card";
 import { Edit3, Mail, Shield, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import Loader from "@/components/loader/Loader";
+import { toast } from "sonner";
 
 const ProfilePage = () => {
   const { data } = authClient.useSession();
-  const { data: sessionsData, isPending } = useQuery({
+  const {
+    data: sessionsData,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["logged-in-devices"],
     queryFn: async () => {
       const response = await axios.get("/api/logged-in-devices");
       return response.data.sessions;
     },
+    retry: (failureCount, error) => {
+      if (failureCount < 3) {
+        // retry up to 3 times
+        return true;
+      } else {
+        toast.error("Failed to load sessions", {
+          description: error?.message || "Please refresh and try again.",
+        });
+        return false;
+      }
+    },
   });
 
-  if (isPending) return <div>Loading...</div>;
+  if (isPending)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
 
   // Fixed sorting to properly prioritize current session regardless of position
   const sortedSessions = [...sessionsData].sort((a, b) => {
@@ -91,6 +114,9 @@ const ProfilePage = () => {
               <Button
                 variant="outline"
                 className="w-full bg-background/50 hover:bg-accent/80 border-border/50 transition-all duration-200 hover:shadow-md"
+                onClick={() =>
+                  toast.info("Change password feature coming soon!")
+                }
               >
                 <Shield className="h-4 w-4 mr-2" />
                 Change Password
@@ -101,7 +127,9 @@ const ProfilePage = () => {
         </Card>
       </div>
       {isPending ? (
-        <div className="">Loading...</div>
+        <div className="">
+          <Loader />
+        </div>
       ) : (
         <>
           <div className="flex flex-col mt-20 gap-2">
