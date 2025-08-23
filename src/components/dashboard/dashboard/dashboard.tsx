@@ -19,8 +19,10 @@ import { useRouter } from "next/navigation";
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Loader from "@/components/loader/Loader";
 
 const fetchPurchases = async () => {
   const response = await axios.get("/api/purchases");
@@ -124,7 +126,11 @@ const Dashboard = () => {
     });
 
     if (loadingPurchases || loadingUsers)
-      return <div className="p-6 text-center">Loading...</div>;
+      return (
+        <div className="p-6 text-center">
+          <Loader />
+        </div>
+      );
     if (errorPurchases || errorUsers)
       return (
         <div className="p-6 text-center text-red-500">Failed to load data</div>
@@ -132,19 +138,24 @@ const Dashboard = () => {
 
     return (
       <div className="max-w-6xl mx-auto mt-10 px-4">
-        <div className="flex justify-end mb-6">
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                className="flex items-center space-x-2 px-4 py-2"
-                onClick={() => router.push("/dashboard/accounts")}
-              >
-                <UserPlus className="w-5 h-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Add Co-Admin</TooltipContent>
-          </Tooltip>
-        </div>
+        {role === "admin" && (
+          <div className="flex justify-end mb-6">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className="flex items-center space-x-2 px-4 py-2"
+                    onClick={() => router.push("/dashboard/accounts")}
+                  >
+                    <UserPlus className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Add Co-Admin</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card
             className="shadow-md border-0 rounded-2xl hover:shadow-xl transition relative cursor-pointer"
