@@ -157,7 +157,7 @@ export function SessionCard({
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowDeleteDialog(true)}
-                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
                 disabled={isDeleting}
               >
                 <Trash2 className="h-4 w-4" />

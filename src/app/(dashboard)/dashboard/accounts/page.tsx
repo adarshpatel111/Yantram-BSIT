@@ -19,7 +19,6 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Branches } from "@/components/dashboard/branches";
-import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
   username: z.string().min(2, "Full name must be at least 2 characters"),
@@ -60,24 +59,30 @@ export default function AccountPage() {
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     try {
-      const res = await authClient.signUp.email({
-        name: data.username,
-        email: data.useremail,
-        password: data.password,
-        phone: data.userpnumber,
-        branch: data.branch,
-        role: data.role,
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: data.username,
+          email: data.useremail,
+          phone: data.userpnumber,
+          password: data.password,
+          role: data.role,
+          branch: data.branch,
+        }),
       });
 
-      toast.success("Account created successfully!", {
-        description: "Welcome aboard 🚀 Redirecting you to dashboard...",
-      });
+      const result = await res.json();
 
+      if (!res.ok) {
+        throw new Error(result.error || "Failed to create user");
+      }
+
+      toast.success("User account created successfully!");
       reset();
       setIsLoading(false);
-      router.push("/dashboard");
     } catch (error: any) {
-      toast.error("Signup failed!", {
+      toast.error("Account creation failed!", {
         description: error.message || "Something went wrong. Try again.",
       });
       setIsLoading(false);
@@ -92,6 +97,7 @@ export default function AccountPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Full Name */}
             <div className="space-y-1">
               <Label htmlFor="username">Full Name</Label>
               <Input
@@ -106,6 +112,7 @@ export default function AccountPage() {
               )}
             </div>
 
+            {/* Email */}
             <div className="space-y-1">
               <Label htmlFor="useremail">Email</Label>
               <Input
@@ -121,6 +128,7 @@ export default function AccountPage() {
               )}
             </div>
 
+            {/* Phone */}
             <div className="space-y-1">
               <Label htmlFor="userpnumber">Phone</Label>
               <Input
@@ -136,6 +144,7 @@ export default function AccountPage() {
               )}
             </div>
 
+            {/* Password */}
             <div className="space-y-1">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -151,7 +160,9 @@ export default function AccountPage() {
               )}
             </div>
 
+            {/* Role & Branch */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Role */}
               <div className="space-y-1">
                 <Label htmlFor="role">Role</Label>
                 <Select
@@ -174,6 +185,7 @@ export default function AccountPage() {
                 )}
               </div>
 
+              {/* Branch */}
               <div className="space-y-1">
                 <Label htmlFor="branch">Locate your store</Label>
                 <Select

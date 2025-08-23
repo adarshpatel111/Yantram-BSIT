@@ -24,9 +24,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
-import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -34,28 +32,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
 import { Branches } from "../dashboard/branches";
 
 const formSchema = z.object({
-  username: z.string().min(3, {
-    message: "Name must be at least 3 characters.",
-  }),
+  username: z
+    .string()
+    .min(3, { message: "Name must be at least 3 characters." }),
   userpnumber: z.string().regex(/^\d{10,}$/, {
     message: "Phone number must be at least 10 digits.",
   }),
-  useremail: z.string().email({
-    message: "Enter a valid email.",
-  }),
-  branch: z.string().min(1, {
-    message: "Branch is required.",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
-  }),
+  useremail: z.string().email({ message: "Enter a valid email." }),
+  branch: z.string().min(1, { message: "Branch is required." }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters." }),
+  role: z.enum(["user", "admin", "manager"]),
 });
 
-export default function SignupForm() {
+export default function AddUserForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -67,34 +61,37 @@ export default function SignupForm() {
       useremail: "",
       branch: "",
       password: "",
+      role: "user" as const,
     },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-      const res = await authClient.signUp.email({
-        name: data.username,
-        email: data.useremail,
-        password: data.password,
-        phone: data.userpnumber,
-        branch: data.branch,
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: data.username,
+          email: data.useremail,
+          phone: data.userpnumber,
+          password: data.password,
+          branch: data.branch,
+          role: data.role,
+        }),
       });
 
-      console.log("✅ Signup success:", res);
-      toast.success("Account created successfully!", {
-        description: "Welcome aboard 🚀 Redirecting you to dashboard...",
-      });
+      const result = await res.json();
 
+      if (!res.ok) throw new Error(result.error || "Failed to create user");
+
+      toast.success("User account created successfully!");
       form.reset();
-      setIsLoading(false);
-
-      redirect("/dashboard");
     } catch (error: any) {
-      console.error("❌ Signup error:", error);
-      toast.error("Signup failed!", {
+      toast.error("Account creation failed!", {
         description: error.message || "Something went wrong. Try again.",
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -113,11 +110,9 @@ export default function SignupForm() {
           />
         </div>
         <div>
-          <CardTitle className="text-xl md:text-2xl">
-            Create your account
-          </CardTitle>
+          <CardTitle className="text-xl md:text-2xl">Add a New User</CardTitle>
           <CardDescription>
-            Enter your details below to create your account
+            Fill in details to create a new user account
           </CardDescription>
         </div>
       </CardHeader>
@@ -162,20 +157,20 @@ export default function SignupForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="yantram566@gmail.com" {...field} />
+                    <Input placeholder="user@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Store Selection */}
+            {/* Branch */}
             <FormField
               control={form.control}
               name="branch"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Store</FormLabel>
+                  <FormLabel>Branch</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -191,6 +186,33 @@ export default function SignupForm() {
                           {branch.label}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Role */}
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Role</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="manager">Manager</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -230,22 +252,13 @@ export default function SignupForm() {
               )}
             />
 
-            {/* Submit */}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <Loader className="w-4 h-4 mr-2 animate-spin" />
               ) : (
-                "Submit"
+                "Add User"
               )}
             </Button>
-
-            {/* Redirect */}
-            <div className="w-full flex justify-center items-center text-sm">
-              Already have an account?{" "}
-              <Link href="/login" className="underline ml-1">
-                Login
-              </Link>
-            </div>
           </form>
         </Form>
       </CardContent>

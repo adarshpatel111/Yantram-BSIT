@@ -71,7 +71,7 @@ export const columns: ColumnDef<IUser>[] = [
         <DeleteModal
           userId={row.original._id} // ✅ FIXED: using _id
           trigger={
-            <Button size="sm" variant="destructive">
+            <Button size="sm" variant="destructive" className="cursor-pointer">
               <TrashIcon className="w-4 h-4" />
             </Button>
           }

@@ -51,7 +51,12 @@ export function DeleteModal({
       {trigger ? (
         <span onClick={() => setOpen(true)}>{trigger}</span>
       ) : (
-        <Button size="sm" variant="destructive" onClick={() => setOpen(true)}>
+        <Button
+          size="sm"
+          variant="destructive"
+          className="cursor-pointer"
+          onClick={() => setOpen(true)}
+        >
           <Trash2 className="w-4 h-4" />
         </Button>
       )}
@@ -68,6 +73,7 @@ export function DeleteModal({
           <DialogFooter>
             <Button
               variant="outline"
+              className="cursor-pointer"
               onClick={() => setOpen(false)}
               disabled={deleteMutation.isPending}
             >
@@ -75,6 +81,7 @@ export function DeleteModal({
             </Button>
             <Button
               variant="destructive"
+              className="cursor-pointer"
               onClick={() => deleteMutation.mutate(userId)}
               disabled={deleteMutation.isPending}
             >

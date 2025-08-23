@@ -18,6 +18,7 @@ function ActionsCell({ purchase }: { purchase: IPurchase }) {
       {/* View */}
       <Button
         size="sm"
+        className="cursor-pointer"
         onClick={() =>
           toast.info("Viewing purchase", {
             description: `ID: ${purchase._id ?? "-"}`,
@@ -30,7 +31,12 @@ function ActionsCell({ purchase }: { purchase: IPurchase }) {
 
       {/* Edit */}
       <>
-        <Button size="sm" onClick={() => setEditOpen(true)} variant="outline">
+        <Button
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => setEditOpen(true)}
+          variant="outline"
+        >
           <EditIcon className="w-4 h-4" />
         </Button>
         {editOpen && purchase._id && (
@@ -50,9 +56,6 @@ function ActionsCell({ purchase }: { purchase: IPurchase }) {
             toast.success("Purchase deleted", {
               description: `Purchase ID: ${purchase._id} removed successfully`,
             })
-          }
-          onError={(err: string) =>
-            toast.error("Failed to delete", { description: err })
           }
         />
       )}

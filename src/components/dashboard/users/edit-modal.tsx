@@ -63,7 +63,12 @@ export function EditModal({ user, onSuccess, onError }: EditModalProps) {
 
   return (
     <>
-      <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
+      <Button
+        size="sm"
+        className="cursor-pointer"
+        variant="outline"
+        onClick={() => setOpen(true)}
+      >
         <EditIcon className="w-4 h-4" />
       </Button>
 
@@ -78,6 +83,7 @@ export function EditModal({ user, onSuccess, onError }: EditModalProps) {
               value={form.name}
               onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
               placeholder="Full name"
+              disabled
             />
             <Input
               value={form.email}
@@ -85,6 +91,7 @@ export function EditModal({ user, onSuccess, onError }: EditModalProps) {
                 setForm((p) => ({ ...p, email: e.target.value }))
               }
               placeholder="Email"
+              disabled
             />
             <Input
               value={form.phone}
@@ -140,11 +147,13 @@ export function EditModal({ user, onSuccess, onError }: EditModalProps) {
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={editMutation.isPending}
+              className="cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               onClick={() => editMutation.mutate(form)}
+              className="cursor-pointer"
               disabled={editMutation.isPending}
             >
               {editMutation.isPending && (

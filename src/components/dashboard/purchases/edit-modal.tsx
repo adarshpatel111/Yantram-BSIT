@@ -145,7 +145,7 @@ export default function EditPurchaseModal({
 
         <DialogFooter className="mt-4">
           <Button
-            className="w-full"
+            className="w-full cursor-pointer"
             onClick={() => selectedStatus && mutation.mutate(selectedStatus)}
             disabled={
               mutation.isPending ||
