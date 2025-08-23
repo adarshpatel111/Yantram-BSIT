@@ -233,13 +233,13 @@ export default function Products() {
             <div className="space-y-4">
               <div className="flex gap-5 items-end">
                 <div className="flex-1">
-                  <label className="text-sm font-medium">Select Branch</label>
+                  <label className="text-sm font-medium">Select store</label>
                   <Select
                     value={selectedBranch ?? undefined}
                     onValueChange={(branch) => setSelectedBranch(branch)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose Branch" />
+                      <SelectValue placeholder="Choose your store" />
                     </SelectTrigger>
                     <SelectContent>
                       {Branches.map((branch) => (
