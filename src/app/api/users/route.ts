@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/db";
 import { auth } from "@/lib/auth";
@@ -23,7 +24,7 @@ async function GetUsers(req: NextRequest) {
   );
   const skip = (page - 1) * limit;
 
-  let query: Record<string, any> = {};
+  const query: Record<string, any> = {};
 
   if (role === "manager" && branch) {
     query.branch = branch;
