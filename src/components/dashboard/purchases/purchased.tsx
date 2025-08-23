@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Purchase {
   _id: string;
@@ -39,10 +40,17 @@ const fetchPurchases = async (): Promise<Purchase[]> => {
 const Purchased = () => {
   const router = useRouter();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["purchases"],
     queryFn: fetchPurchases,
   });
+
+  // ✅ Show toast only when error occurs
+  useEffect(() => {
+    if (isError && error instanceof Error) {
+      toast.error(`Failed to load purchases: ${error.message}`);
+    }
+  }, [isError, error]);
 
   if (isLoading) {
     return (
@@ -53,7 +61,7 @@ const Purchased = () => {
     );
   }
 
-  if (isError || !data?.length) {
+  if (!data?.length) {
     return (
       <div className="flex justify-center items-center h-64 text-gray-500">
         No purchases found.
