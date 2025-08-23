@@ -3,7 +3,7 @@ export type IPurchase = {
   userId: string;
   usesrId?: string;
   productId: string;
-  fullName: string;
+  name: string;
   consumerNumber: string;
   discom: string;
   kw: string;
@@ -13,6 +13,8 @@ export type IPurchase = {
   email: string;
   aadharNumber: string;
   variant: "Residential" | "Commercial" | string;
+  capacity: string;
+  productStatus: string;
   selectedVariant?: { [key: string]: any };
   files: Record<string, unknown>;
   filePreviews: {

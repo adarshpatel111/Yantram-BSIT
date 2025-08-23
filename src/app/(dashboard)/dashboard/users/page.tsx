@@ -7,6 +7,7 @@ import { DataTable } from "./data-table";
 import { UsersPagination } from "./pagination";
 import { columns } from "./columns";
 import PageLimitSelector from "@/components/PageLimitSelector";
+import Loader from "@/components/loader/Loader";
 
 // Fetch function with page + limit
 const fetchUsers = async ({ page, limit }: { page: number; limit: number }) => {
@@ -23,7 +24,12 @@ const UsersPage: React.FC = () => {
     queryFn: () => fetchUsers({ page, limit }),
   });
 
-  if (isPending) return <div>Loading...</div>;
+  if (isPending)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
 
   console.log("Users ", data);
 

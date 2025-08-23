@@ -32,6 +32,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "@/lib/auth-client";
 import { Branches } from "../branches";
+import { toast } from "sonner";
 
 export default function Products() {
   const router = useRouter();
@@ -72,11 +73,25 @@ export default function Products() {
       });
       return res.data.data;
     },
-    onSuccess: (_, productId) => {
+    onMutate: () => {
+      // show loading toast immediately
+      const id = toast.loading("Processing purchase...");
+      return { toastId: id };
+    },
+    onSuccess: (_, productId, context) => {
+      // update cached purchased list
       queryClient.setQueryData<string[]>(
         ["purchasedProducts", userId],
         (old = []) => [...old, productId]
       );
+      // update the loading toast → success
+      toast.success("Purchase successful!", { id: context?.toastId });
+    },
+    onError: (err: any, __, context) => {
+      const message =
+        err?.response?.data?.error || "Failed to complete purchase";
+      // update the loading toast → error
+      toast.error(message, { id: context?.toastId });
     },
   });
 

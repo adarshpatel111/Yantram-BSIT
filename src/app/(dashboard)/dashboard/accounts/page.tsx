@@ -59,6 +59,10 @@ export default function AccountPage() {
 
   const mutation = useMutation({
     mutationFn: (data: AccountFormValues) => axios.post("/api/users", data),
+    onMutate: () => {
+      // show loading toast immediately when request starts
+      toast.loading("Creating user...");
+    },
     onSuccess: () => {
       toast.success("User created successfully");
       reset();

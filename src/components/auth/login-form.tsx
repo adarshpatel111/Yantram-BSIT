@@ -27,6 +27,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   useremail: z.string().email({
@@ -57,12 +58,23 @@ export default function LoginForm() {
         password: data.password,
         callbackURL: "/dashboard",
       });
+
       setIsLoading(false);
       form.reset();
-      console.log("onSubmit signin", res);
-    } catch (error) {
-      console.log(error);
+
+      toast.success("Login successful 🎉", {
+        description: "Redirecting you to your dashboard...",
+      });
+
+      console.log("✅ onSubmit signin", res);
+    } catch (error: any) {
+      console.error(error);
       setIsLoading(false);
+
+      toast.error("Login failed ❌", {
+        description:
+          error?.message || "Invalid email or password. Please try again.",
+      });
     }
   };
 
@@ -139,6 +151,7 @@ export default function LoginForm() {
               {isLoading ? (
                 <>
                   <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  Logging in...
                 </>
               ) : (
                 "Submit"

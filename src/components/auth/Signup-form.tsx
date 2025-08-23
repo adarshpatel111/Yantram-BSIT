@@ -34,13 +34,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-export const Branches = [
-  { key: "bharuch", label: "Bharuch" },
-  { key: "vadodara", label: "Vadodara" },
-  { key: "surat", label: "Surat" },
-  { key: "ahmedabad", label: "Ahmedabad" },
-];
+import { toast } from "sonner";
+import { Branches } from "../dashboard/branches";
 
 const formSchema = z.object({
   username: z.string().min(3, {
@@ -85,12 +80,21 @@ export default function SignupForm() {
         phone: data.userpnumber,
         branch: data.branch,
       });
-      console.log("result", res);
+
+      console.log("✅ Signup success:", res);
+      toast.success("Account created successfully!", {
+        description: "Welcome aboard 🚀 Redirecting you to dashboard...",
+      });
+
       form.reset();
       setIsLoading(false);
+
       redirect("/dashboard");
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error("❌ Signup error:", error);
+      toast.error("Signup failed!", {
+        description: error.message || "Something went wrong. Try again.",
+      });
       setIsLoading(false);
     }
   };

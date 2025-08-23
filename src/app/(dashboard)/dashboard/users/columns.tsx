@@ -1,20 +1,13 @@
 "use client";
 
 import { DeleteModal } from "@/components/dashboard/users/delete-modal";
+import { EditModal } from "@/components/dashboard/users/edit-modal";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IUser } from "@/types/user-account";
 import { ColumnDef } from "@tanstack/react-table";
-import { EditIcon, EyeIcon } from "lucide-react";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
+import { EyeIcon, TrashIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export const columns: ColumnDef<IUser>[] = [
   {
@@ -39,42 +32,62 @@ export const columns: ColumnDef<IUser>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "name",
-    header: "Name",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "phone",
-    header: "Phone",
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
-  },
+  { accessorKey: "name", header: "Name" },
+  { accessorKey: "email", header: "Email" },
+  { accessorKey: "phone", header: "Phone" },
+  { accessorKey: "role", header: "Role" },
   {
     id: "Actions",
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-2">
+        {/* View */}
         <Button
-          size={"sm"}
+          size="sm"
           variant="outline"
-          onClick={() => console.log(row.original)}
+          onClick={() =>
+            toast.info("Viewing user", {
+              description: `User: ${row.original.name}`,
+            })
+          }
         >
-          <EyeIcon />
+          <EyeIcon className="w-4 h-4" />
         </Button>
-        <Button
-          size={"sm"}
-          variant="outline"
-          onClick={() => console.log(row.original)}
-        >
-          <EditIcon />
-        </Button>
-        <DeleteModal />
+
+        {/* Edit */}
+        <EditModal
+          user={row.original}
+          onSuccess={() =>
+            toast.success("User updated", {
+              description: `${row.original.name} was updated.`,
+            })
+          }
+          onError={(err) =>
+            toast.error("Update failed", { description: err.message })
+          }
+        />
+
+        {/* Delete */}
+        <DeleteModal
+<<<<<<< Updated upstream
+          userId={row.original._id}
+=======
+          userId={row.original._id} // ✅ FIXED: using _id
+          trigger={
+            <Button size="sm" variant="destructive">
+              <TrashIcon className="w-4 h-4" />
+            </Button>
+          }
+>>>>>>> Stashed changes
+          onSuccess={() =>
+            toast.success("User deleted", {
+              description: `${row.original.name} has been removed.`,
+            })
+          }
+          onError={(err: Error) =>
+            toast.error("Delete failed", { description: err.message })
+          }
+        />
       </div>
     ),
   },
