@@ -29,7 +29,7 @@ const formSchema = z.object({
     .regex(/^[0-9]+$/, "Phone must contain only numbers"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   role: z.enum(["user", "admin", "manager"]),
-  branch: z.string().nonempty("Please select a branch"),
+  branch: z.string().nonempty("Please select a store"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -194,7 +194,7 @@ export default function AccountPage() {
                   }
                 >
                   <SelectTrigger id="branch">
-                    <SelectValue placeholder="Select a branch" />
+                    <SelectValue placeholder="Select a store" />
                   </SelectTrigger>
                   <SelectContent>
                     {Branches.map((branch) => (

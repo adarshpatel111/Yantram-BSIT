@@ -177,7 +177,7 @@ export default function AddUserForm() {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a branch" />
+                        <SelectValue placeholder="Select a store" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
