@@ -6,15 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { IUser } from "@/types/user-account";
 import { ColumnDef } from "@tanstack/react-table";
 import { EditIcon, EyeIcon } from "lucide-react";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
+import { toast } from "sonner"; // 👈 add this
 
 export const columns: ColumnDef<IUser>[] = [
   {
@@ -39,42 +31,49 @@ export const columns: ColumnDef<IUser>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "name",
-    header: "Name",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "phone",
-    header: "Phone",
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
-  },
+  { accessorKey: "name", header: "Name" },
+  { accessorKey: "email", header: "Email" },
+  { accessorKey: "phone", header: "Phone" },
+  { accessorKey: "role", header: "Role" },
   {
     id: "Actions",
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-2">
         <Button
-          size={"sm"}
+          size="sm"
           variant="outline"
-          onClick={() => console.log(row.original)}
+          onClick={() =>
+            toast.info("Viewing user", {
+              description: `User: ${row.original.name}`,
+            })
+          }
         >
-          <EyeIcon />
+          <EyeIcon className="w-4 h-4" />
         </Button>
         <Button
-          size={"sm"}
+          size="sm"
           variant="outline"
-          onClick={() => console.log(row.original)}
+          onClick={() =>
+            toast("Edit user", {
+              description: `User: ${row.original.name}`,
+            })
+          }
         >
-          <EditIcon />
+          <EditIcon className="w-4 h-4" />
         </Button>
-        <DeleteModal />
+        {/* Pass success + error callbacks to DeleteModal */}
+        <DeleteModal
+          userId={row.original.id}
+          onSuccess={() =>
+            toast.success("User deleted", {
+              description: `${row.original.name} has been removed.`,
+            })
+          }
+          onError={(err: Error) =>
+            toast.error("Delete failed", { description: err.message })
+          }
+        />
       </div>
     ),
   },
