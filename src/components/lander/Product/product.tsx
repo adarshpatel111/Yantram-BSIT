@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { featuredProducts } from "@/utilities/Productdata";
 import { toast } from "sonner";
+import { Branches } from "@/components/dashboard/branches";
 
 export default function Products() {
   const router = useRouter();
@@ -38,6 +39,8 @@ export default function Products() {
   const [selectedVariantLabel, setSelectedVariantLabel] = useState<
     string | null
   >(null);
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const formatPrice = (price: number) => `₹${price.toLocaleString("en-IN")}`;
 
@@ -50,6 +53,8 @@ export default function Products() {
       setSelectedProduct(product);
       setShowVariationForm(true);
       setVariantPrice(null);
+      setSelectedVariantLabel(null);
+      setSelectedBranch(null);
       return;
     }
     proceedToLogin(product);
@@ -64,6 +69,7 @@ export default function Products() {
       specs: product.specs,
       features: product.features,
       variation,
+      branch: selectedBranch, // Include selected branch
     };
     console.log("Purchase data:", JSON.stringify(productData, null, 2));
     router.push("/login");
@@ -113,8 +119,12 @@ export default function Products() {
                       alt={product.name}
                       width={400}
                       height={300}
-                      className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                      onClick={() =>
+                        setPreviewImage(product.image?.src || "/file.svg")
+                      }
                     />
+
                     {product.badge && (
                       <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">
                         {product.badge}
@@ -179,7 +189,13 @@ export default function Products() {
                             <div className="font-medium text-gray-700 capitalize">
                               {key.replace(/([A-Z])/g, " $1")}
                             </div>
-                            <div className="text-muted-foreground">{value}</div>
+                            <div className="text-muted-foreground">
+                              {typeof value === "object"
+                                ? Object.entries(value)
+                                    .map(([k, v]) => `${k}: ${v}`)
+                                    .join(", ")
+                                : value}
+                            </div>
                           </div>
                         ))}
                     </div>
@@ -227,6 +243,17 @@ export default function Products() {
           )}
         </div>
       </div>
+      <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
+        <DialogContent className="p-0 max-w-4xl w-full">
+          <Image
+            src={previewImage || ""}
+            alt="Preview"
+            width={800}
+            height={600}
+            className="w-full h-auto object-contain"
+          />
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={showVariationForm} onOpenChange={setShowVariationForm}>
         <DialogContent aria-describedby={undefined}>
@@ -235,13 +262,14 @@ export default function Products() {
               Select Variations for {selectedProduct?.name}
             </DialogTitle>
             <DialogDescription>
-              Please choose a variant before proceeding to purchase.
+              Please choose a variant and branch before proceeding.
             </DialogDescription>
           </DialogHeader>
 
           {selectedProduct?.variants && selectedProduct.variants.length > 0 ? (
             <div className="space-y-4">
               <div className="flex gap-5 items-center">
+                {/* Variant Selection */}
                 <div>
                   <label className="text-sm font-medium">Select Variant</label>
                   <Select
@@ -280,6 +308,28 @@ export default function Products() {
                   </Select>
                 </div>
 
+                {/* Branch Selection */}
+                <div>
+                  <label className="text-sm font-medium">
+                    Locate Your Store
+                  </label>
+                  <Select
+                    onValueChange={(branchKey) => setSelectedBranch(branchKey)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose Branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Branches.map((branch) => (
+                        <SelectItem key={branch.key} value={branch.key}>
+                          {branch.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Price Display */}
                 <div className="h-2">
                   {variantPrice && (
                     <div className="text-lg font-bold text-primary">
@@ -292,13 +342,15 @@ export default function Products() {
               <Button
                 className="w-full mt-4"
                 onClick={() => {
-                  if (selectedVariantLabel) {
+                  if (selectedVariantLabel && selectedBranch) {
                     handleVariationSubmit(selectedVariantLabel);
                   } else {
-                    toast.error("Please select a variant before proceeding.");
+                    toast.error(
+                      "Please select both variant and branch before proceeding."
+                    );
                   }
                 }}
-                disabled={!selectedVariantLabel}
+                disabled={!selectedVariantLabel || !selectedBranch}
               >
                 Submit & Proceed
               </Button>

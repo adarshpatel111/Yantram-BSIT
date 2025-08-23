@@ -129,7 +129,7 @@ const Purchased = () => {
                   )}
                   {purchase.branch && (
                     <p className="text-sm text-gray-500">
-                      Branch: {purchase.branch}
+                      Store: {purchase.branch}
                     </p>
                   )}
 

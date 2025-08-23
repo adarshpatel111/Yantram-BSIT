@@ -137,7 +137,7 @@ export default function SolarForm({ id }: { id: string }) {
             <SelectContent>
               {product.variants.map((v: any, idx: number) => (
                 <SelectItem key={idx} value={v.placetype}>
-                  {v.placetype} — {v.kw}kW — ₹{v.price.toLocaleString("en-IN")}
+                  {v.placetype}
                 </SelectItem>
               ))}
             </SelectContent>
