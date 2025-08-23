@@ -1,12 +1,13 @@
 "use client";
 
 import { DeleteModal } from "@/components/dashboard/users/delete-modal";
+import { EditModal } from "@/components/dashboard/users/edit-modal";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IUser } from "@/types/user-account";
 import { ColumnDef } from "@tanstack/react-table";
-import { EditIcon, EyeIcon } from "lucide-react";
-import { toast } from "sonner"; // 👈 add this
+import { EyeIcon, TrashIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export const columns: ColumnDef<IUser>[] = [
   {
@@ -40,6 +41,7 @@ export const columns: ColumnDef<IUser>[] = [
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-2">
+        {/* View */}
         <Button
           size="sm"
           variant="outline"
@@ -51,20 +53,32 @@ export const columns: ColumnDef<IUser>[] = [
         >
           <EyeIcon className="w-4 h-4" />
         </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() =>
-            toast("Edit user", {
-              description: `User: ${row.original.name}`,
+
+        {/* Edit */}
+        <EditModal
+          user={row.original}
+          onSuccess={() =>
+            toast.success("User updated", {
+              description: `${row.original.name} was updated.`,
             })
           }
-        >
-          <EditIcon className="w-4 h-4" />
-        </Button>
-        {/* Pass success + error callbacks to DeleteModal */}
+          onError={(err) =>
+            toast.error("Update failed", { description: err.message })
+          }
+        />
+
+        {/* Delete */}
         <DeleteModal
+<<<<<<< Updated upstream
           userId={row.original._id}
+=======
+          userId={row.original._id} // ✅ FIXED: using _id
+          trigger={
+            <Button size="sm" variant="destructive">
+              <TrashIcon className="w-4 h-4" />
+            </Button>
+          }
+>>>>>>> Stashed changes
           onSuccess={() =>
             toast.success("User deleted", {
               description: `${row.original.name} has been removed.`,
