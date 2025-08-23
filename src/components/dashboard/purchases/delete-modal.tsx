@@ -14,6 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 interface DeleteModalProps {
   purchaseId: string;
@@ -26,24 +28,29 @@ export function DeleteModal({
   onSuccess,
   onError,
 }: DeleteModalProps) {
-  const handleDelete = async () => {
-    try {
-      // TODO: Replace this with your API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+  const queryClient = useQueryClient();
 
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      await axios.delete(`/api/purchases/${purchaseId}`);
+    },
+    onSuccess: () => {
       toast.success("Purchase deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["purchases"] });
       onSuccess();
-    } catch (err: any) {
-      toast.error("Failed to delete purchase");
-      onError(err?.message || "Error occurred");
-    }
-  };
+    },
+    onError: (err: any) => {
+      const message = err?.response?.data?.error || "Failed to delete purchase";
+      toast.error(message);
+      onError(message);
+    },
+  });
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Trash className="h-4 w-4 text-destructive" />
+        <Button variant="destructive" size="icon">
+          <Trash className="h-4 w-4" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -51,16 +58,19 @@ export function DeleteModal({
           <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. It will permanently delete this
-            purchase and remove your data from our servers.
+            purchase and remove its data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleteMutation.isPending}>
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-white hover:bg-destructive/90"
-            onClick={handleDelete}
+            onClick={() => deleteMutation.mutate()}
+            disabled={deleteMutation.isPending}
           >
-            Delete
+            {deleteMutation.isPending ? "Deleting..." : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
