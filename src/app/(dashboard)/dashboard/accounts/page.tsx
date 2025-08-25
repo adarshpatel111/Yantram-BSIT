@@ -76,7 +76,14 @@ export default function AccountPage() {
       }
 
       toast.success("User account created successfully!");
-      reset();
+      reset({
+        username: "",
+        useremail: "",
+        userpnumber: "",
+        password: "",
+        role: "user",
+        branch: "",
+      });
       setIsLoading(false);
     } catch (error: any) {
       toast.error("Account creation failed!", {
@@ -94,7 +101,6 @@ export default function AccountPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Full Name */}
             <div className="space-y-1">
               <Label htmlFor="username">Full Name</Label>
               <Input
@@ -108,8 +114,6 @@ export default function AccountPage() {
                 </p>
               )}
             </div>
-
-            {/* Email */}
             <div className="space-y-1">
               <Label htmlFor="useremail">Email</Label>
               <Input
@@ -124,8 +128,6 @@ export default function AccountPage() {
                 </p>
               )}
             </div>
-
-            {/* Phone */}
             <div className="space-y-1">
               <Label htmlFor="userpnumber">Phone</Label>
               <Input
@@ -140,8 +142,6 @@ export default function AccountPage() {
                 </p>
               )}
             </div>
-
-            {/* Password */}
             <div className="space-y-1">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -156,10 +156,7 @@ export default function AccountPage() {
                 </p>
               )}
             </div>
-
-            {/* Role & Branch */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Role */}
               <div className="space-y-1">
                 <Label htmlFor="role">Role</Label>
                 <Select
@@ -181,8 +178,6 @@ export default function AccountPage() {
                   <p className="text-sm text-red-500">{errors.role.message}</p>
                 )}
               </div>
-
-              {/* Branch */}
               <div className="space-y-1">
                 <Label htmlFor="branch">Locate your store</Label>
                 <Select
@@ -208,7 +203,6 @@ export default function AccountPage() {
                 )}
               </div>
             </div>
-
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
