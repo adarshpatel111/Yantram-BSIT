@@ -76,7 +76,7 @@ const HeroSection: React.FC = () => {
         </Link>
 
         <div className="flex gap-3.5">
-          <div className="flex justify-center items-center -space-x-3">
+          {/* <div className="flex justify-center items-center -space-x-3">
             {reviews?.map((review, index) => (
               <Image
                 key={index}
@@ -87,7 +87,7 @@ const HeroSection: React.FC = () => {
                 className="rounded-xl border-2 dark:border-neutral-800"
               />
             ))}
-          </div>
+          </div> */}
         </div>
         <HeroBentoGrid />
       </div>
