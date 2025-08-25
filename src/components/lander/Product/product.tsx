@@ -266,13 +266,16 @@ export default function Products() {
             </DialogDescription>
           </DialogHeader>
 
-          {selectedProduct?.variants && selectedProduct.variants.length > 0 ? (
+          {selectedProduct?.variants?.length > 0 ? (
             <div className="space-y-4">
-              <div className="flex gap-5 items-center">
-                {/* Variant Selection */}
-                <div>
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1">
                   <label className="text-sm font-medium">Select Variant</label>
                   <Select
+                    defaultValue={Object.entries(selectedProduct.variants[0])
+                      .filter(([key]) => key !== "price")
+                      .map(([_, val]) => `${val}`)
+                      .join(" - ")}
                     onValueChange={(label) => {
                       setSelectedVariantLabel(label);
                       const found = selectedProduct.variants.find(
@@ -308,8 +311,7 @@ export default function Products() {
                   </Select>
                 </div>
 
-                {/* Branch Selection */}
-                <div>
+                <div className="flex-1">
                   <label className="text-sm font-medium">
                     Locate Your Store
                   </label>
@@ -328,19 +330,16 @@ export default function Products() {
                     </SelectContent>
                   </Select>
                 </div>
-
-                {/* Price Display */}
-                <div className="h-2">
-                  {variantPrice && (
-                    <div className="text-lg font-bold text-primary">
-                      Price: {formatPrice(variantPrice)}
-                    </div>
-                  )}
-                </div>
               </div>
 
+              {variantPrice && (
+                <div className="text-lg font-bold text-primary text-center">
+                  Price: {formatPrice(variantPrice)}
+                </div>
+              )}
+
               <Button
-                className="w-full mt-4"
+                className="w-full mt-2"
                 onClick={() => {
                   if (selectedVariantLabel && selectedBranch) {
                     handleVariationSubmit(selectedVariantLabel);
