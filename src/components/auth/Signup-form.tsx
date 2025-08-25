@@ -33,6 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Branches } from "../dashboard/branches";
+import Link from "next/link";
 
 const formSchema = z.object({
   username: z
@@ -42,7 +43,7 @@ const formSchema = z.object({
     message: "Phone number must be at least 10 digits.",
   }),
   useremail: z.string().email({ message: "Enter a valid email." }),
-  branch: z.string().min(1, { message: "Branch is required." }),
+  store: z.string().min(1, { message: "Store is required." }),
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters." }),
@@ -59,7 +60,7 @@ export default function AddUserForm() {
       username: "",
       userpnumber: "",
       useremail: "",
-      branch: "",
+      store: "",
       password: "",
       role: "user" as const,
     },
@@ -76,7 +77,7 @@ export default function AddUserForm() {
           email: data.useremail,
           phone: data.userpnumber,
           password: data.password,
-          branch: data.branch,
+          branch: data.store,
           role: data.role,
         }),
       });
@@ -164,16 +165,16 @@ export default function AddUserForm() {
               )}
             />
 
-            {/* Branch */}
+            {/* Store (was Branch) */}
             <FormField
               control={form.control}
-              name="branch"
+              name="store"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Branch</FormLabel>
+                  <FormLabel>Store</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value || undefined}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -211,8 +212,8 @@ export default function AddUserForm() {
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="manager">Manager</SelectItem>
+                      {/* <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="manager">Manager</SelectItem> */}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -259,6 +260,12 @@ export default function AddUserForm() {
                 "Add User"
               )}
             </Button>
+            <div className="w-full flex justify-center items-center text-sm">
+              Already have an account?{" "}
+              <Link href="/login" className="underline ml-1">
+                login
+              </Link>
+            </div>
           </form>
         </Form>
       </CardContent>
