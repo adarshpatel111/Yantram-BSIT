@@ -50,51 +50,42 @@ async function GetUsers(req: NextRequest) {
 
 // POST /api/users
 async function CreateUser(req: NextRequest) {
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const body = await req.json();
+    const { fullName, email, phone, role: newRole, branch, password } = body;
 
-  const { role } = session.user ?? {};
-  const sessionBranch = session.user?.branch;
+    if (!fullName || !email || !phone || !newRole || !password || !branch) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
 
-  const body = await req.json();
-  const { fullName, email, phone, role: newRole, branch, password } = body;
+    // ✅ correct Better Auth usage
+    const user = await auth.api.createUser({
+      body: {
+        email,
+        password,
+        name: fullName,
+        data: {
+          phone,
+          role: newRole,
+          branch,
+        },
+      },
+    });
 
-  if (!fullName || !email || !phone || !newRole || !password || !branch) {
     return NextResponse.json(
-      { error: "Missing required fields" },
-      { status: 400 }
+      { message: "User created", data: user },
+      { status: 201 }
+    );
+  } catch (err: any) {
+    console.error("CreateUser error:", err);
+    return NextResponse.json(
+      { error: err.message || "Failed to create user" },
+      { status: 500 }
     );
   }
-
-  // Managers can only create users in their branch
-  if (role === "manager" && sessionBranch !== branch) {
-    return NextResponse.json(
-      { error: "Managers can only create users in their own branch" },
-      { status: 403 }
-    );
-  }
-
-  const existingUser = await db.collection("user").findOne({ email });
-  if (existingUser)
-    return NextResponse.json({ error: "User already exists" }, { status: 409 });
-
-  const newUser = {
-    fullName,
-    email,
-    phone,
-    role: newRole,
-    branch,
-    password,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-  const result = await db.collection("user").insertOne(newUser);
-
-  return NextResponse.json(
-    { message: "User created", data: { _id: result.insertedId, ...newUser } },
-    { status: 201 }
-  );
 }
 
 // PATCH /api/users/:id
@@ -161,6 +152,6 @@ async function DeleteUser(req: NextRequest) {
 }
 
 export const GET = withRoleCheck(["user", "admin", "manager"])(GetUsers);
-export const POST = withRoleCheck(["admin", "manager"])(CreateUser);
+export const POST = CreateUser;
 export const PATCH = withRoleCheck(["admin", "manager"])(UpdateUser);
 export const DELETE = withRoleCheck(["admin", "manager"])(DeleteUser);
