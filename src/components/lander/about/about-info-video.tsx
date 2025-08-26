@@ -24,13 +24,6 @@ const videos: VideoItem[] = [
       "Learn how Frenchies managers can securely log in, manage branches, and access their dedicated tools with ease.",
     src: "/Yantram-Manager-SRecording.mp4",
   },
-  {
-    id: 3,
-    title: "Admin Login",
-    description:
-      "A step-by-step walkthrough of the admin login process, showcasing the dashboard and management tools available for administrators.",
-    src: "/Yantram-Admin-SRecording.mp4",
-  },
 ];
 
 const AboutInfoVideo = () => {
