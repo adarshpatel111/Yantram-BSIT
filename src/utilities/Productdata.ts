@@ -1,5 +1,6 @@
 import Album from "../../public/Album.png";
-import HeatPump from "../../public/HeatPump-Heater.webp";
+import HeatPumpHeater from "../../public/HeatPump-Heater.webp";
+import HeatPump from "../../public/HeatPump.webp";
 import SolarCooker from "../../public/solarCooker.webp";
 import OZO3Img from "../../public/ozo3.jpg";
 import fanImg from "../../public/FAN2.png";
@@ -56,7 +57,7 @@ export const featuredProducts = [
     id: "water-heater",
     name: "Solar Water Heater",
     model: "SunHeat Pro",
-    image: HeatPump,
+    image: HeatPumpHeater,
     features: [
       "Eco-Friendly Solar Heating",
       "Low Maintenance, Long Life",
