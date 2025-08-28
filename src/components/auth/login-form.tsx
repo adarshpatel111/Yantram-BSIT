@@ -33,8 +33,8 @@ const formSchema = z.object({
   useremail: z.string().email({
     message: "Enter a valid email.",
   }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
   }),
 });
 
@@ -60,15 +60,19 @@ export default function LoginForm() {
       });
 
       setIsLoading(false);
+      if ("error" in res) {
+        toast.error("Login failed ❌", {
+          description: res.error?.message || "Invalid email or password",
+        });
+        return;
+      }
+
       form.reset();
 
       toast.success("Login successful 🎉", {
         description: "Redirecting you to your dashboard...",
       });
-
-      console.log("✅ onSubmit signin", res);
     } catch (error: any) {
-      console.error(error);
       setIsLoading(false);
 
       toast.error("Login failed ❌", {
