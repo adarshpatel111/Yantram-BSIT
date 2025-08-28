@@ -11,9 +11,11 @@ import { Edit3, Mail, Shield, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Loader from "@/components/loader/Loader";
 import { toast } from "sonner";
+import PasswordChange from "@/components/dashboard/passwordChange/passwordChange";
 
 const ProfilePage = () => {
   const { data } = authClient.useSession();
+  const [openPasswordChange, setOpenPasswordChange] = React.useState(false);
   const {
     data: sessionsData,
     isPending,
@@ -114,14 +116,17 @@ const ProfilePage = () => {
               <Button
                 variant="outline"
                 className="w-full bg-background/50 hover:bg-accent/80 border-border/50 transition-all duration-200 hover:shadow-md"
-                onClick={() =>
-                  toast.info("Change password feature coming soon!")
-                }
+                onClick={() => setOpenPasswordChange(true)}
               >
                 <Shield className="h-4 w-4 mr-2" />
                 Change Password
                 <Edit3 className="h-4 w-4 ml-auto" />
               </Button>
+
+              <PasswordChange
+                open={openPasswordChange}
+                onClose={() => setOpenPasswordChange(false)}
+              />
             </div>
           </CardContent>
         </Card>
