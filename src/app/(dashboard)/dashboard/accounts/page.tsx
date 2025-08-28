@@ -25,7 +25,12 @@ const formSchema = z.object({
     .string()
     .min(10, "Phone must be at least 10 digits")
     .regex(/^[0-9]+$/, "Phone must contain only numbers"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters." })
+    .regex(/[A-Z]/, { message: "Must contain at least one uppercase letter." })
+    .regex(/[a-z]/, { message: "Must contain at least one lowercase letter." })
+    .regex(/[0-9]/, { message: "Must contain at least one number." }),
   role: z.enum(["user", "admin", "manager"]),
   branch: z.string().nonempty("Please select a store"),
 });
